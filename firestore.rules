@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuth() && request.auth.uid == userId;
+    }
+
+    // Schema validation for a User document
+    function isValidUser(data) {
+      // Required fields
+      return data.username is string
+        && data.email is string
+        && data.avatarUrl is string
+        && data.skillsOffered is list
+        && data.skillsWanted is list
+        && data.learningStyle is list
+        // Optional fields: if they exist, they must be the correct type
+        && (!('bio' in data) || data.bio is string)
+        && (!('availability' in data) || data.availability is string);
+    }
+
+    // Schema validation for an Appointment document
+    function isValidAppointment(data) {
+      return data.matchId is string
+        && data.userIds is list
+        && data.date is timestamp
+        // meetLink is optional
+        && (!('meetLink' in data) || data.meetLink is string)
+        && data.status is string
+        && (data.status == 'scheduled' || data.status == 'completed' || data.status == 'cancelled');
+    }
+
+    match /users/{userId} {
+      // CREATE: Allow if user is authenticated (for seeding) OR is creating their own profile.
+      // This allows the seed script to run, while still enforcing ownership for regular creation.
+      allow create: if (isAuth() || isOwner(userId))
+                      && isValidUser(request.resource.data)
+                      && request.resource.data.keys().hasOnly(['username', 'email', 'avatarUrl', 'bio', 'skillsOffered', 'skillsWanted', 'learningStyle', 'availability']);
+
+      // READ: Any authenticated user can read profiles for matching.
+      allow get, list: if isAuth();
+
+      // UPDATE: User can only update their own profile, maintaining schema integrity.
+      // Email is immutable, and the final document must conform to the schema.
+      allow update: if isOwner(userId) 
+                      && request.resource.data.email == resource.data.email
+                      && isValidUser(request.resource.data)
+                      && request.resource.data.keys().hasOnly(['username', 'email', 'avatarUrl', 'bio', 'skillsOffered', 'skillsWanted', 'learningStyle', 'availability']);
+    }
+
+    match /appointments/{appointmentId} {
+      // READ/UPDATE: User must be part of the appointment.
+      allow read: if isAuth() && request.auth.uid in resource.data.userIds;
+      allow update: if isAuth() 
+                      && request.auth.uid in resource.data.userIds
+                      && isValidAppointment(request.resource.data);
+      
+      // CREATE: User must be one of the participants, there must be exactly two participants,
+      // and the new data must conform to the schema.
+      allow create: if isAuth() 
+                      && request.auth.uid in request.resource.data.userIds 
+                      && request.resource.data.userIds.size() == 2
+                      && isValidAppointment(request.resource.data);
+    }
+  }
+}

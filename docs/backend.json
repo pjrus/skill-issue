@@ -1,0 +1,110 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user profile in the SkillSwap application.",
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The user's unique username."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User's email address, used for login."
+        },
+        "avatarUrl": {
+          "type": "string",
+          "description": "URL for the user's avatar image."
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography of the user."
+        },
+        "skillsOffered": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Skills the user can teach."
+        },
+        "skillsWanted": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Skills the user wants to learn."
+        },
+        "learningStyle": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Hands-on",
+              "Concept-first",
+              "Visual",
+              "Discussion-based",
+              "Fast-paced",
+              "Step-by-step"
+            ]
+          },
+          "description": "The user's preferred learning styles."
+        },
+        "availability": {
+          "type": "string",
+          "description": "User's general availability."
+        }
+      },
+      "required": ["username", "email", "avatarUrl", "skillsOffered", "skillsWanted", "learningStyle"]
+    },
+    "Appointment": {
+      "title": "Appointment",
+      "description": "A scheduled skill swap session.",
+      "type": "object",
+      "properties": {
+        "matchId": {
+          "type": "string"
+        },
+        "userIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The IDs of the two users in the appointment."
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The scheduled date and time of the appointment."
+        },
+        "meetLink": {
+          "type": "string",
+          "description": "URL for the Google Meet call."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["scheduled", "completed", "cancelled"]
+        }
+      },
+      "required": ["matchId", "userIds", "date", "status"]
+    }
+  },
+  "auth": {
+    "providers": ["google.com"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "Stores individual user profiles."
+    },
+    "/appointments/{appointmentId}": {
+      "schema": {
+        "$ref": "#/entities/Appointment"
+      },
+      "description": "Stores scheduled appointments between users."
+    }
+  }
+}

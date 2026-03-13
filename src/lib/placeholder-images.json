@@ -1,0 +1,94 @@
+{
+  "placeholderImages": [
+    {
+      "id": "user-avatar-1",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/1/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-2",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/2/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-3",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/3/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-4",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/4/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-5",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/5/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-6",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/6/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-7",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/7/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-8",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/8/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-9",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/9/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-10",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/10/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-11",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/11/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-12",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/12/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-13",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/13/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-14",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/14/200/200",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-15",
+      "description": "A placeholder avatar for a user",
+      "imageUrl": "https://picsum.photos/seed/15/200/200",
+      "imageHint": "person portrait"
+    }
+  ]
+}
