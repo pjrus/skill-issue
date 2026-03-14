@@ -61,8 +61,26 @@ export default function SettingsPage() {
     const [skillsOffered, setSkillsOffered] = useState<string[]>([]);
     const [skillsWanted, setSkillsWanted] = useState<string[]>([]);
     const [learningStyles, setLearningStyles] = useState<LearningStyle[]>([]);
-    const [preferredModel, setPreferredModel] = useState<string>('googleai/gemini-3.1-flash');
+    const [preferredModel, setPreferredModel] = useState<string>('googleai/gemini-1.5-flash');
     const [isLoading, setIsLoading] = useState(false);
+    const [availableModels, setAvailableModels] = useState<{id: string, name: string}[]>([]);
+
+    useEffect(() => {
+        const fetchModels = async () => {
+            try {
+                const res = await fetch('/api/models');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.models) {
+                        setAvailableModels(data.models);
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch models", error);
+            }
+        };
+        fetchModels();
+    }, []);
 
     useEffect(() => {
         if (user) {
@@ -151,18 +169,15 @@ export default function SettingsPage() {
                             onChange={(e) => setPreferredModel(e.target.value)}
                             className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            <option value="googleai/gemini-3.1-flash">Gemini 3.1 Flash</option>
-                            <option value="googleai/gemini-3-flash-preview">Gemini 3 Flash Preview</option>
-                            <option value="googleai/gemini-3-pro-preview">Gemini 3 Pro Preview</option>
-                            <option value="googleai/gemini-2.5-flash">Gemini 2.5 Flash</option>
-                            <option value="googleai/gemini-2.5-pro">Gemini 2.5 Pro</option>
-                            <option value="googleai/gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
-                            <option value="googleai/gemini-2.0-flash">Gemini 2.0 Flash</option>
-                            <option value="googleai/gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
-                            <option value="googleai/gemini-2.0-pro-exp">Gemini 2.0 Pro Exp</option>
-                            <option value="googleai/gemini-1.5-flash">Gemini 1.5 Flash</option>
-                            <option value="googleai/gemini-1.5-pro">Gemini 1.5 Pro</option>
-                            <option value="googleai/gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</option>
+                            {availableModels.length > 0 ? (
+                                availableModels.map((model) => (
+                                    <option key={model.id} value={`googleai/${model.id}`}>
+                                        {model.name}
+                                    </option>
+                                ))
+                            ) : (
+                                <option value="googleai/gemini-1.5-flash">Gemini 1.5 Flash</option>
+                            )}
                         </select>
                     </div>
 
