@@ -1,11 +1,11 @@
-# SkillSwap Code Architecture
+# Skill-Issue Code Architecture
 
 This document explains the app’s hierarchical structure and how Firebase is integrated across auth, data, and UI flows.
 
 ## 1) Top-Level Project Hierarchy
 
 ```text
-skillswap-unihack-2026/
+project-root/
 ├── src/
 │   ├── app/                    # Next.js App Router pages + route handlers
 │   │   ├── (app)/              # Authenticated application routes

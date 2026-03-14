@@ -17,7 +17,7 @@
 
 ---
 
-## 🦴 Meet Skilliton
+## Meet Skilliton
 
 Skilliton is the AI-powered skeleton mascot at the heart of Skill-Issue. Chat with Skilliton to find the perfect skill swap partner, get personalised recommendations, and — most importantly — hear him shout **SKIIIIIIILZZZZZZZZZZ** at the end of every message.
 
@@ -25,49 +25,49 @@ Skilliton runs on Google Gemini via Firebase Genkit, with full support for user-
 
 ---
 
-## ✨ Features
+## Features
 
-### 🏠 Home — Have a Skill Issue?
+### Home — Have a Skill Issue?
 - Enter what you want to **learn** and what you want to **teach** to instantly refresh your AI-generated matches
 - Browse **Recommended Users** or flip to **All Users** to see everyone on the platform
 - One-click access to **Chat with Skilliton to fix your Skill Issue**
 
-### 🤖 Skilliton Chat
+### Skilliton Chat
 - Real-time AI chat interface with Skilliton, your personal skeleton tutor
 - Skilliton knows your profile, your skills, and everyone else on the platform
 - Chat history persists across the conversation
 - Every response ends with his iconic catchphrase: **SKIIIIIIILZZZZZZZZZZ**
 - Supports custom Gemini API key overrides (stored locally, never in the cloud)
 
-### 📅 Bookings
+### Bookings
 - View all your upcoming skill-swap sessions
 - Auto-generates a real Google Meet link per booking (via the Meet REST API)
 - **Download to Calendar file (.ics)** — includes the other user's email address and meet link for a complete calendar event
 - Legacy placeholder links are automatically upgraded to real Meet spaces
 
-### ✅ Confirmation Page
+### Confirmation Page
 - Booking confirmed view with participant avatars
 - "Generating Meeting Space..." state while the Meet link is created
 - Download .ics and **Done** button that returns to Bookings
 
-### 🔧 Skills Page
+### Skills Page
 - Manage your offered and wanted skills
 - AI-assisted skill discovery via Skilliton
 
-### ⚙️ Settings
+### Settings
 - Update full name, bio, learning style, and availability
 - Upload a profile picture (Firebase Storage)
 - Choose your preferred Gemini model from a live list of available models
 - **Gemini API Key Override** — provide your own key, stored in `localStorage` only
 
-### 🔐 Authentication
+### Authentication
 - Email/password sign-up and sign-in
 - **Sign in with Google** (one-tap OAuth via Firebase)
 - Automatic profile creation for new Google sign-ins (name and avatar synced from Google)
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -83,7 +83,7 @@ Skilliton runs on Google Gemini via Firebase Genkit, with full support for user-
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -97,7 +97,7 @@ Skilliton runs on Google Gemini via Firebase Genkit, with full support for user-
 ### 1. Install dependencies
 
 ```bash
-cd skillswap-unihack-2026
+cd <project-root>
 npm install
 ```
 
@@ -121,10 +121,10 @@ GOOGLE_GENAI_API_KEY=
 GOOGLE_MEET_API_KEY=
 ```
 
-### 3. Deploy Firestore security rules
+### 3. Deploy Firebase security rules (Firestore + Storage)
 
 ```bash
-npx firebase-tools deploy --only firestore:rules
+npx firebase-tools deploy --only firestore:rules,storage
 ```
 
 ### 4. Run the development server
@@ -137,10 +137,10 @@ Open [http://localhost:9003](http://localhost:9003) in your browser.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
-skillswap-unihack-2026/
+project-root/
 ├── src/
 │   ├── ai/
 │   │   └── flows/
@@ -164,23 +164,24 @@ skillswap-unihack-2026/
 │   ├── services/                   # Database + auth service layer
 │   └── types/                      # TypeScript types
 ├── firestore.rules
+├── storage.rules
 └── README.md
 ```
 
 ---
 
-## 🔑 Gemini API Key Override
+## Gemini API Key Override
 
 Users can optionally supply their own Gemini API key in **Settings**. The key is stored only in `localStorage` — it is **never** sent to Firestore or any server except as a request header to Gemini. This allows users to bypass shared rate limits or use their own quota.
 
 ---
 
-## 🤝 Built at UniHack 2026
+## Built at UniHack 2026
 
 Skill-Issue was built during [UniHack 2026](https://unihack.net/).
 
 ---
 
 <div align="center">
-  <sub>💀 Powered by Skilliton — <em>SKIIIIIIILZZZZZZZZZZ</em></sub>
+  <sub>Powered by Skilliton — <em>SKIIIIIIILZZZZZZZZZZ</em></sub>
 </div>

@@ -42,8 +42,8 @@ export const meetService = {
       const endTime = new Date(now.getTime() + 60 * 60 * 1000).toISOString(); // 1 hour later
 
       const event = {
-        summary: 'SkillSwap Meeting',
-        description: 'Automatically generated meeting link for your SkillSwap session.',
+        summary: 'Skill-Issue Meeting',
+        description: 'Automatically generated meeting link for your Skill-Issue session.',
         start: {
           dateTime: startTime,
           timeZone: 'UTC',
@@ -54,7 +54,7 @@ export const meetService = {
         },
         conferenceData: {
           createRequest: {
-            requestId: `skillswap-meet-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+            requestId: `skill-issue-meet-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
             conferenceSolutionKey: {
               type: 'hangoutsMeet',
             },
@@ -80,7 +80,7 @@ export const meetService = {
 
       return {
         meetingUri: meetingUri,
-        spaceName: response.data.summary || 'SkillSwap Meeting',
+        spaceName: response.data.summary || 'Skill-Issue Meeting',
       };
     } catch (error: any) {
       console.error('[MeetService] Error:', error);

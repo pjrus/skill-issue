@@ -6,7 +6,7 @@ This guide will walk you through setting up User OAuth 2.0 to generate Google Me
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
 2. In the top-left corner, click the project drop-down menu and select **New Project**.
-3. Name it something like "SkillSwap Calendar Setup" and click **Create**.
+3. Name it something like "Skill-Issue Calendar Setup" and click **Create**.
 4. Once created, make sure that project is selected in the top-left dropdown.
 
 ## Step 2: Enable the Calendar API
@@ -20,7 +20,7 @@ This guide will walk you through setting up User OAuth 2.0 to generate Google Me
 1. In the left navigation menu, go to **APIs & Services** > **OAuth consent screen**.
 2. Select **External** (unless you are part of a Google Workspace organization and only want users in your organization to use the app). Click **Create**.
 3. Fill out the required fields:
-   * **App name:** e.g., "SkillSwap Link Generator"
+   * **App name:** e.g., "Skill-Issue Link Generator"
    * **User support email:** Select your email.
    * **Developer contact information:** Put your email again.
 4. Click **Save and Continue**.
@@ -54,7 +54,7 @@ GOOGLE_CLIENT_SECRET=your-client-secret-here
 
 ## Step 6: Get Your Refresh Token
 
-1. Open a terminal in VS Code inside your project folder (`skillswap-unihack-2026`).
+1. Open a terminal in VS Code inside your project folder (`<project-root>`).
 2. Run the script I created for you:
    ```bash
    node get-google-token.mjs
@@ -62,7 +62,7 @@ GOOGLE_CLIENT_SECRET=your-client-secret-here
 3. The terminal will print a very long URL starting with `Authorize this app by visiting this url: https://accounts.google.com/...`.
 4. **Command-Click** (or open it manually) to visit that URL in your browser.
 5. Log in with the same Google Account you added to "Test Users" in Step 3.
-6. You will see a "Google hasn't verified this app" warning. Click **Advanced**, then **Go to SkillSwap (unsafe)**.
+6. You will see a "Google hasn't verified this app" warning. Click **Advanced**, then **Go to Skill-Issue (unsafe)**.
 7. Click **Continue / Allow** to grant it permission to edit your calendar.
 8. Google will give you an **Authorization Code** (it usually provides a button to copy it).
 9. Paste that code back into your VS Code terminal and press Enter.

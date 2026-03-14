@@ -1,6 +1,6 @@
-# SkillSwap Schema and Security Rules
+# Skill-Issue Schema and Security Rules
 
-This document outlines the data schema for the SkillSwap application and the corresponding Firestore Security Rules to protect user data.
+This document outlines the data schema for the Skill-Issue application and the corresponding Firestore Security Rules to protect user data.
 
 For code-level architecture and Firebase wiring details (providers, auth flow, service/hook layers), see `docs/architecture.md`.
 

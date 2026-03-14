@@ -1,4 +1,4 @@
-# **App Name**: SkillSwap
+# **App Name**: Skill-Issue
 
 ## Core Features:
 

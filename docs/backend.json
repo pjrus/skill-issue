@@ -2,7 +2,7 @@
   "entities": {
     "User": {
       "title": "User",
-      "description": "A user profile in the SkillSwap application.",
+      "description": "A user profile in the Skill-Issue application.",
       "type": "object",
       "properties": {
         "username": {
