@@ -3,9 +3,10 @@
 import { db } from '@/firebase/config';
 import { collection, doc, getDoc, getDocs, updateDoc, addDoc, Timestamp } from 'firebase/firestore';
 import type { User } from '@/types/userTypes';
-import type { Appointment } from '@/types/matchTypes';
+import { Appointment } from '@/types/matchTypes';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import { generateICS } from '@/utils/calendarUtils';
 
 // Helper to convert Firestore Timestamps to Dates in appointment objects
 const appointmentFromDoc = (docSnap: any): Appointment => {
@@ -126,6 +127,9 @@ export const databaseService = {
   sendBookingConfirmationEmail: async (appointment: Appointment): Promise<void> => {
     const mailCollection = collection(db, 'mail');
     
+    // Generate ICS content once for the appointment
+    const icsBase64 = generateICS(appointment);
+    
     // Send to each participant
     const emailPromises = appointment.users.map(async (user) => {
       const otherUser = appointment.users.find(u => u.id !== user.id);
@@ -144,10 +148,19 @@ export const databaseService = {
                 <p style="margin: 5px 0;">Date: ${appointment.date.toLocaleDateString()} at ${appointment.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                 ${appointment.meetLink ? `<p style="margin: 5px 0;">Meeting Link: <a href="${appointment.meetLink}">${appointment.meetLink}</a></p>` : ''}
               </div>
+              <p>We've attached a calendar invitation to this email for your convenience.</p>
               <p>Happy swapping!</p>
               <p>Best,<br>The SkillSwap Team</p>
             </div>
           `,
+          attachments: [
+            {
+              filename: 'invite.ics',
+              content: icsBase64,
+              encoding: 'base64',
+              contentType: 'text/calendar',
+            }
+          ]
         },
       };
       
