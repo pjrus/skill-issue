@@ -5,16 +5,35 @@ import type { Match } from '@/types/matchTypes';
 
 const SIMULATED_DELAY = 1500;
 
+interface CacheEntry {
+  skillsWanted: string[];
+  skillsOffered: string[];
+  matches: Match[];
+}
+
+const matchCache = new Map<string, CacheEntry>();
+
 export const matchingService = {
   findMatches: async (currentUserId: string): Promise<Match[]> => {
     return new Promise(async (resolve) => {
       const currentUser = await databaseService.getUser(currentUserId);
-      const allUsers = await databaseService.getUsers();
 
       if (!currentUser) {
         resolve([]);
         return;
       }
+
+      const cached = matchCache.get(currentUserId);
+      if (
+        cached &&
+        JSON.stringify([...cached.skillsWanted].sort()) === JSON.stringify([...currentUser.skillsWanted].sort()) &&
+        JSON.stringify([...cached.skillsOffered].sort()) === JSON.stringify([...currentUser.skillsOffered].sort())
+      ) {
+        resolve(cached.matches);
+        return;
+      }
+
+      const allUsers = await databaseService.getUsers();
 
       const potentialMatches: User[] = allUsers.filter(
         (user) => user.id !== currentUserId
@@ -83,6 +102,11 @@ export const matchingService = {
       }
 
       setTimeout(() => {
+        matchCache.set(currentUserId, {
+          skillsWanted: [...currentUser.skillsWanted],
+          skillsOffered: [...currentUser.skillsOffered],
+          matches: enrichedMatches,
+        });
         resolve(enrichedMatches);
       }, SIMULATED_DELAY);
     });
