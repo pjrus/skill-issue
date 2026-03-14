@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from 'next/link';
 import { Icons } from '@/components/icons';
-import { LayoutDashboard, LifeBuoy, LogOut, Settings, Users, Loader2, Wand2 } from 'lucide-react';
+import { LayoutDashboard, LifeBuoy, LogOut, Settings, Users, Loader2, Wand2, Menu, Home, BookOpen } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 
 function Header() {
@@ -66,6 +66,39 @@ function Header() {
             </Link>
           </nav>
         </div>
+
+        {/* Mobile Navigation Dropdown */}
+        <div className="flex md:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => router.push('/')}>
+                <Home className="mr-2 h-4 w-4" />
+                <span>Home</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => router.push('/skills')}>
+                <BookOpen className="mr-2 h-4 w-4" />
+                <span>Skills</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => router.push('/bookings')}>
+                <Users className="mr-2 h-4 w-4" />
+                <span>Bookings</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => router.push('/ai-chat')}>
+                <Wand2 className="mr-2 h-4 w-4" />
+                <span>Skilliton Chat</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
             <Button variant="ghost" size="icon" className="hidden md:flex" onClick={() => router.push('/settings')} title="Settings">

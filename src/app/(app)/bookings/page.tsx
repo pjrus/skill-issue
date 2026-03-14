@@ -18,7 +18,7 @@ function formatIcalDate(date: Date): string {
   return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 }
 
-function downloadIcal(appt: Appointment, currentUsername: string, otherUsername: string) {
+function downloadIcal(appt: Appointment, currentUsername: string, otherUsername: string, otherUserEmail: string) {
   const start = formatIcalDate(appt.date);
   const end = formatIcalDate(new Date(appt.date.getTime() + 60 * 60 * 1000)); // 1 hour
   const now = formatIcalDate(new Date());
@@ -35,7 +35,7 @@ function downloadIcal(appt: Appointment, currentUsername: string, otherUsername:
     `DTSTART:${start}`,
     `DTEND:${end}`,
     `SUMMARY:Skill Swap with ${otherUsername}`,
-    `DESCRIPTION:Skill swap session between ${currentUsername} and ${otherUsername}.\\nMeet link: ${appt.meetLink}`,
+    `DESCRIPTION:Skill swap session between ${currentUsername} and ${otherUsername} (${otherUserEmail}).\\nMeet link: ${appt.meetLink}`,
     `URL:${appt.meetLink}`,
     `STATUS:CONFIRMED`,
     'END:VEVENT',
@@ -162,10 +162,10 @@ export default function BookingsPage() {
                     variant="outline"
                     size="sm"
                     className="gap-2"
-                    onClick={() => downloadIcal(appt, user?.username ?? 'You', otherUser.username)}
+                    onClick={() => downloadIcal(appt, user?.username ?? 'You', otherUser.username, otherUser.email)}
                   >
                     <Download className="h-4 w-4" />
-                    Download .ics
+                    Download to Calendar file (.ics)
                   </Button>
                 </CardFooter>
               </Card>
