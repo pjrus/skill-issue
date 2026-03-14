@@ -7,9 +7,45 @@ import { databaseService } from '@/services/databaseService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, ExternalLink, Calendar as CalendarIcon, Clock, Users } from 'lucide-react';
+import { CheckCircle, ExternalLink, Calendar as CalendarIcon, Clock, Users, Download } from 'lucide-react';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
+
+function formatIcalDate(date: Date): string {
+  return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+
+function downloadIcal(appt: Appointment, currentUsername: string, otherUsername: string) {
+  const start = formatIcalDate(appt.date);
+  const end = formatIcalDate(new Date(appt.date.getTime() + 60 * 60 * 1000));
+  const now = formatIcalDate(new Date());
+  const ical = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Skill-Issue//Skill-Issue//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${appt.id}@skill-issue.app`,
+    `DTSTAMP:${now}`,
+    `DTSTART:${start}`,
+    `DTEND:${end}`,
+    `SUMMARY:Skill Swap with ${otherUsername}`,
+    `DESCRIPTION:Skill swap session between ${currentUsername} and ${otherUsername}.\\nMeet link: ${appt.meetLink}`,
+    `URL:${appt.meetLink}`,
+    `STATUS:CONFIRMED`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+  const blob = new Blob([ical], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `skill-swap-${otherUsername}-${format(appt.date, 'yyyy-MM-dd')}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 function ConfirmationSkeleton() {
     return(
@@ -46,6 +82,7 @@ function ConfirmationSkeleton() {
 export default function ConfirmationPage({ params }: { params: Promise<{ appointmentId: string }> }) {
   const { appointmentId } = use(params);
   const { user: currentUser } = useUser();
+  const router = useRouter();
   const [appointment, setAppointment] = useState<Appointment | null>(null);
 
   useEffect(() => {
@@ -102,6 +139,26 @@ export default function ConfirmationPage({ params }: { params: Promise<{ appoint
                     <ExternalLink className="ml-2 h-4 w-4" />
                 </a>
             </Button>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full gap-2"
+                onClick={() => downloadIcal(appointment, currentUser.username, otherUser.username)}
+              >
+                <Download className="h-4 w-4" />
+                Download .ics
+              </Button>
+              <Button
+                size="lg"
+                className="w-full"
+                onClick={() => router.push('/bookings')}
+              >
+                Done
+              </Button>
+            </div>
+
             <p className="text-xs text-center text-muted-foreground">A calendar invite has been sent to your email (simulated).</p>
         </CardContent>
       </Card>

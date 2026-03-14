@@ -5,12 +5,51 @@ import { useUser } from '@/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Video, Clock } from 'lucide-react';
+import { Calendar, Video, Clock, Download } from 'lucide-react';
 import { databaseService } from '@/services/databaseService';
 import type { Appointment } from '@/types/matchTypes';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/config';
+import { format } from 'date-fns';
+
+function formatIcalDate(date: Date): string {
+  return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+
+function downloadIcal(appt: Appointment, currentUsername: string, otherUsername: string) {
+  const start = formatIcalDate(appt.date);
+  const end = formatIcalDate(new Date(appt.date.getTime() + 60 * 60 * 1000)); // 1 hour
+  const now = formatIcalDate(new Date());
+
+  const ical = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Skill-Issue//Skill-Issue//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${appt.id}@skill-issue.app`,
+    `DTSTAMP:${now}`,
+    `DTSTART:${start}`,
+    `DTEND:${end}`,
+    `SUMMARY:Skill Swap with ${otherUsername}`,
+    `DESCRIPTION:Skill swap session between ${currentUsername} and ${otherUsername}.\\nMeet link: ${appt.meetLink}`,
+    `URL:${appt.meetLink}`,
+    `STATUS:CONFIRMED`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+
+  const blob = new Blob([ical], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `skill-swap-${otherUsername}-${format(appt.date, 'yyyy-MM-dd')}.ics`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 export default function BookingsPage() {
   const { user } = useUser();
@@ -22,7 +61,6 @@ export default function BookingsPage() {
       if (!user) return;
       setIsLoading(true);
       try {
-        // Find appointments where the current user is a participant
         const q = query(
           collection(db, 'appointments'),
           where('userIds', 'array-contains', user.id)
@@ -31,14 +69,12 @@ export default function BookingsPage() {
         
         const appts: Appointment[] = [];
         for (const docSnap of snapshot.docs) {
-          const data = docSnap.data();
           const appt = await databaseService.getAppointment(docSnap.id);
           if (appt) {
              appts.push(appt);
           }
         }
         
-        // Sort by date ascending
         appts.sort((a, b) => a.date.getTime() - b.date.getTime());
         setAppointments(appts);
         
@@ -103,7 +139,7 @@ export default function BookingsPage() {
                     <CardTitle className="text-lg">Session with {otherUser.username}</CardTitle>
                     <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
                        <Clock className="h-4 w-4" />
-                       <span>{appt.date.toLocaleDateString()} at {appt.date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                       <span>{format(appt.date, 'EEEE, MMMM d, yyyy')} at {format(appt.date, 'h:mm a')}</span>
                     </div>
                   </div>
                   <Badge variant={appt.status === 'scheduled' ? 'default' : 'secondary'}>
@@ -121,6 +157,17 @@ export default function BookingsPage() {
                      </a>
                    </div>
                 </CardContent>
+                <CardFooter className="border-t pt-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                    onClick={() => downloadIcal(appt, user?.username ?? 'You', otherUser.username)}
+                  >
+                    <Download className="h-4 w-4" />
+                    Download .ics
+                  </Button>
+                </CardFooter>
               </Card>
             );
           })}
@@ -129,3 +176,5 @@ export default function BookingsPage() {
     </div>
   );
 }
+
+
