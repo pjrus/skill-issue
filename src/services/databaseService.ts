@@ -17,6 +17,7 @@ const appointmentFromDoc = (docSnap: any): Appointment => {
     } as Appointment;
 }
 
+
 export const databaseService = {
   getUsers: async (): Promise<User[]> => {
     const usersCollection = collection(db, 'users');
@@ -81,8 +82,8 @@ export const databaseService = {
     if (!user1 || !user2) throw new Error("Could not find users for new appointment");
 
     return {
-        id: newAppointmentRef.id,
         ...appointmentData,
+        id: newAppointmentRef.id,
         users: [user1, user2],
     };
   },
@@ -107,12 +108,10 @@ export const databaseService = {
     }
 
     return {
+        ...apptData,
         id: apptSnap.id,
-        matchId: apptData.matchId,
         date: (apptData.date as Timestamp).toDate(),
-        meetLink: apptData.meetLink,
-        status: apptData.status,
         users: [users[0], users[1]]
-    };
+    } as Appointment;
   },
 };

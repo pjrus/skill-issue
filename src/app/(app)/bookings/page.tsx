@@ -7,7 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Video, Clock, Download } from 'lucide-react';
+import { Calendar, Video, Clock, Download, ExternalLink, Copy } from 'lucide-react';
+import { Icons } from '@/components/icons';
 import { databaseService } from '@/services/databaseService';
 import type { Appointment } from '@/types/matchTypes';
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -147,14 +148,43 @@ export default function BookingsPage() {
                   </Badge>
                 </CardHeader>
                 <CardContent>
-                   <div className="bg-muted p-4 rounded-lg flex items-center justify-between">
-                     <div className="flex items-center gap-2 font-medium">
-                        <Video className="h-5 w-5 text-primary" />
-                        Meeting Link
+                   <div className="bg-muted/50 p-6 rounded-xl space-y-4">
+                     <div className="flex items-center justify-between">
+                       <div className="flex items-center gap-2 font-semibold">
+                          <Video className="h-5 w-5 text-primary" />
+                          <span>Meeting Details</span>
+                       </div>
+                       {appt.meetLink && (
+                         <Button asChild size="sm" variant="default" className="shadow-sm">
+                           <a href={appt.meetLink} target="_blank" rel="noopener noreferrer" className="gap-2">
+                             Join Meeting
+                             <ExternalLink className="h-4 w-4" />
+                           </a>
+                         </Button>
+                       )}
                      </div>
-                     <a href={appt.meetLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-mono text-sm">
-                        {appt.meetLink}
-                     </a>
+                     
+                     <div className="flex flex-col gap-1">
+                       <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Meeting Link</span>
+                       <div className="flex items-center gap-2">
+                         <code className="text-xs bg-background/50 px-2 py-1 rounded border border-border/40 font-mono text-muted-foreground truncate flex-1">
+                           {appt.meetLink || 'No link generated yet'}
+                         </code>
+                         {appt.meetLink && (
+                           <Button 
+                             variant="ghost" 
+                             size="icon" 
+                             className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                             onClick={() => {
+                               navigator.clipboard.writeText(appt.meetLink);
+                               // You might want to add a toast here if you have access to useToast
+                             }}
+                           >
+                             <Copy className="h-4 w-4" />
+                           </Button>
+                         )}
+                       </div>
+                     </div>
                    </div>
                 </CardContent>
                 <CardFooter className="border-t pt-4">

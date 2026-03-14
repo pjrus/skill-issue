@@ -37,6 +37,7 @@ export default function BookingPage({ params }: { params: Promise<{ matchId: str
     }
   }, [currentUser, matchId]);
 
+
   const handleBooking = async () => {
     if (!date || !selectedTime || !currentUser || !otherUser) {
         toast({ variant: 'destructive', title: 'Please select a date and time.' });
@@ -48,16 +49,32 @@ export default function BookingPage({ params }: { params: Promise<{ matchId: str
     const appointmentDateTime = add(date, { hours, minutes });
 
     try {
+        // Attempt to get a real Google Meet link from our API
+        let meetLink = '';
+        const meetResponse = await fetch('/api/meet/create', { method: 'POST' });
+        
+        if (!meetResponse.ok) {
+          const errorData = await meetResponse.json();
+          throw new Error(errorData.details || 'Failed to create Google Meet space');
+        }
+        
+        const meetData = await meetResponse.json();
+        meetLink = meetData.meetLink;
+
         const appointment = await databaseService.createAppointment({
             matchId: matchId,
             users: [currentUser, otherUser],
             date: appointmentDateTime,
-            meetLink: 'https://meet.google.com/new', // Placeholder link
+            meetLink: meetLink,
             status: 'scheduled',
         });
         router.push(`/confirmation/${appointment.id}`);
-    } catch (error) {
-        toast({ variant: 'destructive', title: 'Booking failed', description: 'Please try again later.' });
+    } catch (error: any) {
+        toast({ 
+          variant: 'destructive', 
+          title: 'Booking failed', 
+          description: error.message || 'Could not create a meeting space. Please check your configuration.' 
+        });
         setIsLoading(false);
     }
   }
