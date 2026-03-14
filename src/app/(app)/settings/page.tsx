@@ -38,6 +38,7 @@ function SkillsInput({ title, skills, setSkills }: { title: string; skills: stri
                 value={currentSkill}
                 onChange={(e) => setCurrentSkill(e.target.value)}
                 onKeyDown={handleAddSkill}
+                autoComplete="off"
             />
             <div className="flex flex-wrap gap-2 min-h-[2.5rem] p-2 rounded-md border bg-transparent">
                 {skills.map(skill => (

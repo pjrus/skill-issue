@@ -126,11 +126,11 @@ export default function LoginPage() {
                         <CardContent className="space-y-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="email-signin">Email</Label>
-                                <Input id="email-signin" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                                <Input id="email-signin" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="password-signin">Password</Label>
-                                <Input id="password-signin" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                                <Input id="password-signin" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required />
                             </div>
                             <Button onClick={handleEmailLogin} disabled={isProcessing} className="w-full">
                                 {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -149,11 +149,11 @@ export default function LoginPage() {
                         <CardContent className="space-y-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="email-signup">Email</Label>
-                                <Input id="email-signup" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                                <Input id="email-signup" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" required />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="password-signup">Password</Label>
-                                <Input id="password-signup" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                                <Input id="password-signup" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" required />
                             </div>
                             <Button onClick={handleEmailSignUp} disabled={isProcessing} className="w-full">
                                 {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
