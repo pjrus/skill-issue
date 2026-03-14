@@ -114,4 +114,9 @@ export const databaseService = {
         users: [users[0], users[1]]
     } as Appointment;
   },
+
+  updateAppointment: async (id: string, data: Partial<Appointment>): Promise<void> => {
+    const apptRef = doc(db, 'appointments', id);
+    await updateDoc(apptRef, data as any);
+  },
 };
