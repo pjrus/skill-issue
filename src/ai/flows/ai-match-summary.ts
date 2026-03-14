@@ -23,6 +23,7 @@ const AIMatchSummaryInputSchema = z.object({
   studentBWants: z
     .array(z.string())
     .describe("A list of skills Student B wants to learn."),
+  model: z.string().optional().describe('The AI model to use.'),
 });
 export type AIMatchSummaryInput = z.infer<typeof AIMatchSummaryInputSchema>;
 
@@ -67,7 +68,8 @@ const aiMatchSummaryFlow = ai.defineFlow(
     outputSchema: AIMatchSummaryOutputSchema,
   },
   async (input) => {
-    const {output} = await aiMatchSummaryPrompt(input);
+    const options = input.model ? { model: input.model } : undefined;
+    const {output} = await aiMatchSummaryPrompt(input, options);
     return output!;
   }
 );

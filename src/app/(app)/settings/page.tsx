@@ -61,6 +61,7 @@ export default function SettingsPage() {
     const [skillsOffered, setSkillsOffered] = useState<string[]>([]);
     const [skillsWanted, setSkillsWanted] = useState<string[]>([]);
     const [learningStyles, setLearningStyles] = useState<LearningStyle[]>([]);
+    const [preferredModel, setPreferredModel] = useState<string>('googleai/gemini-3.1-flash');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -69,6 +70,9 @@ export default function SettingsPage() {
             setSkillsOffered(user.skillsOffered);
             setSkillsWanted(user.skillsWanted);
             setLearningStyles(user.learningStyle);
+            if (user.preferredModel) {
+                setPreferredModel(user.preferredModel);
+            }
         }
     }, [user]);
 
@@ -89,6 +93,7 @@ export default function SettingsPage() {
                 skillsOffered,
                 skillsWanted,
                 learningStyle: learningStyles,
+                preferredModel,
             }
             const updatedUser = await databaseService.updateUser(user.id, updatedData);
             if(updatedUser) {
@@ -136,6 +141,19 @@ export default function SettingsPage() {
                                 </Button>
                             ))}
                         </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="model">Preferred AI Model (requires refresh to fully apply)</Label>
+                        <select
+                            id="model"
+                            value={preferredModel}
+                            onChange={(e) => setPreferredModel(e.target.value)}
+                            className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <option value="googleai/gemini-3.1-flash">Gemini 3.1 Flash</option>
+                            <option value="googleai/gemini-2.5-flash">Gemini 2.5 Flash</option>
+                        </select>
                     </div>
 
                     <Button onClick={handleSave} disabled={isLoading}>

@@ -26,7 +26,7 @@ export default function SkillsPage() {
     setIsLoading(true);
     setSkills(null);
     try {
-      const result = await aiService.extractSkillsFromText({ description: message });
+      const result = await aiService.extractSkillsFromText({ description: message, model: user?.preferredModel });
       setSkills({
         offered: result.skillsOffered,
         wanted: result.skillsWanted,

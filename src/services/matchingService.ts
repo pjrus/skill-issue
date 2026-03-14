@@ -46,6 +46,7 @@ export const matchingService = {
             studentAWants: match.userA.skillsWanted,
             studentBSkillsOffered: match.userB.skillsOffered,
             studentBWants: match.userB.skillsWanted,
+            model: match.userA.preferredModel,
           });
 
           enrichedMatches.push({

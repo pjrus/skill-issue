@@ -14,6 +14,7 @@ const AISkillExtractionInputSchema = z.object({
   description: z
     .string()
     .describe('A natural language description of skills the user offers and needs.'),
+  model: z.string().optional().describe('The AI model to use.'),
 });
 export type AISkillExtractionInput = z.infer<typeof AISkillExtractionInputSchema>;
 
@@ -57,7 +58,8 @@ const extractSkillsFlow = ai.defineFlow(
     outputSchema: AISkillExtractionOutputSchema,
   },
   async input => {
-    const {output} = await extractSkillsPrompt(input);
+    const options = input.model ? { model: input.model } : undefined;
+    const {output} = await extractSkillsPrompt(input, options);
     return output!;
   }
 );

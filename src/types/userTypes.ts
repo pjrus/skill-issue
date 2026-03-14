@@ -26,4 +26,5 @@ export type User = {
   skillsWanted: string[];
   learningStyle: LearningStyle[];
   availability: string;
+  preferredModel?: string;
 };
