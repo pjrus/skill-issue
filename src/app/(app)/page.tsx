@@ -60,7 +60,7 @@ function MatchCard({ match }: { match: Match }) {
 
   const otherUser = match.users.find(u => u.id !== currentUser.id);
   if (!otherUser) return null;
-  
+
   const { aToB, bToA } = match.matchedSkills;
 
   const currentUserIsA = match.users[0].id === currentUser.id;
@@ -81,7 +81,7 @@ function MatchCard({ match }: { match: Match }) {
       </CardHeader>
       <CardContent className="flex-grow space-y-4">
         <p className="text-sm text-muted-foreground italic">"{match.aiSummary}"</p>
-        
+
         <div className="space-y-2">
           <h4 className="text-sm font-semibold">You will learn:</h4>
           <div className="flex flex-wrap gap-2">
@@ -109,7 +109,7 @@ export default function HomePage() {
   const router = useRouter();
   const { user, updateUserContext } = useUser();
   const { toast } = useToast();
-  
+
   const [searchTermWanted, setSearchTermWanted] = useState('');
   const [searchTermOffered, setSearchTermOffered] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -128,7 +128,7 @@ export default function HomePage() {
       try {
         const results = await matchingService.findMatches(user.id);
         setMatches(results);
-        
+
         // Also fetch all users for the "View all" functionality
         const users = await databaseService.getUsers();
         setAllUsers(users.filter(u => u.id !== user.id));
@@ -154,7 +154,7 @@ export default function HomePage() {
 
       // Concatenate and remove duplicates case-insensitively
       const normalize = (s: string) => s.toLowerCase();
-      
+
       const existingWantedNormalized = (user.skillsWanted || []).map(normalize);
       const uniqueNewWanted = newSkillsWanted.filter(s => !existingWantedNormalized.includes(normalize(s)));
       const updatedSkillsWanted = [...(user.skillsWanted || []), ...uniqueNewWanted];
@@ -167,23 +167,23 @@ export default function HomePage() {
         skillsWanted: updatedSkillsWanted,
         skillsOffered: updatedSkillsOffered
       });
-      
+
       if (updatedUser) {
         updateUserContext(updatedUser);
       }
-      
+
       setSearchTermWanted('');
       setSearchTermOffered('');
 
       toast({ title: 'Skills Updated', description: 'Refreshing your matches...' });
       await loadMatches();
     } catch (error) {
-       console.error(error);
-       toast({
-         variant: 'destructive',
-         title: 'Error',
-         description: 'Failed to search/update skills. Please try again.',
-       });
+      console.error(error);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to search/update skills. Please try again.',
+      });
     } finally {
       setIsSaving(false);
     }
@@ -191,61 +191,61 @@ export default function HomePage() {
 
   return (
     <div className="container py-8 space-y-12">
-      
+
       {/* Top Section: Find your next Skill Swap Card */}
       <section>
         <Card className="w-full shadow-sm border-muted bg-card">
           <CardHeader className="pb-4">
-             <CardTitle className="flex items-center gap-2 text-xl font-semibold">
+            <CardTitle className="flex items-center gap-2 text-xl font-semibold">
               <Sparkles className="w-5 h-5" />
-              Find your next Skill Swap
+              Have a Skill Issue?
             </CardTitle>
-            <CardDescription className="text-sm">What are you looking to achieve today?</CardDescription>
+            <CardDescription className="text-sm">Look no further, Skilliton is here! Just fill in the following fields, or Chat with Skilliton via the button below.</CardDescription>
           </CardHeader>
-          
+
           <CardContent className="space-y-6">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">What do you want to learn?</label>
-                  <Input 
-                    placeholder="e.g. React, Spanish, Guitar..." 
-                    className="bg-background/50" 
-                    value={searchTermWanted}
-                    onChange={(e) => setSearchTermWanted(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">What do you want to teach?</label>
-                  <Input 
-                    placeholder="e.g. Graphic Design, Algebra, Baking..." 
-                    className="bg-background/50" 
-                    value={searchTermOffered}
-                    onChange={(e) => setSearchTermOffered(e.target.value)}
-                  />
-                </div>
-             </div>
-             <div className="flex justify-end pt-2">
-                <Button 
-                   onClick={handleSearch} 
-                   disabled={isSaving}
-                   className="px-8"
-                   variant="secondary"
-                >
-                   {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                   Search
-                </Button>
-             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">What do you want to learn?</label>
+                <Input
+                  placeholder="e.g. React, Spanish, Guitar..."
+                  className="bg-background/50"
+                  value={searchTermWanted}
+                  onChange={(e) => setSearchTermWanted(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">What do you want to teach?</label>
+                <Input
+                  placeholder="e.g. Graphic Design, Algebra, Baking..."
+                  className="bg-background/50"
+                  value={searchTermOffered}
+                  onChange={(e) => setSearchTermOffered(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end pt-2">
+              <Button
+                onClick={handleSearch}
+                disabled={isSaving}
+                className="px-8"
+                variant="secondary"
+              >
+                {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                Search
+              </Button>
+            </div>
           </CardContent>
         </Card>
-        
+
         <div className="mt-4 flex justify-center">
-          <Button 
-             variant="outline"
-             onClick={() => router.push('/ai-chat')}
-             className="gap-2 text-muted-foreground bg-card shadow-sm hover:text-foreground hover:bg-muted/50"
+          <Button
+            variant="outline"
+            onClick={() => router.push('/ai-chat')}
+            className="gap-2 text-muted-foreground bg-card shadow-sm hover:text-foreground hover:bg-muted/50"
           >
-             <Sparkles className="w-4 h-4 text-primary" />
-             Chat with Skilliton to find your next Skill Swapper
+            <Sparkles className="w-4 h-4 text-primary" />
+            Chat with Skilliton to fix your Skill Issue
           </Button>
         </div>
       </section>
@@ -253,14 +253,14 @@ export default function HomePage() {
       <section>
         <div className="mb-6 flex items-baseline justify-between">
           <h2 className="text-2xl font-bold tracking-tight">
-            {viewAll ? "All Skill Swappers" : "Recommended Skill Swappers"}
+            {viewAll ? "All Users" : "Have a Skill Issue?"}
           </h2>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground hidden sm:inline-block">
               {viewAll ? allUsers.length : matches.length} found
             </span>
-            <Button 
-              variant="link" 
+            <Button
+              variant="link"
               className="p-0 h-auto font-medium"
               onClick={() => setViewAll(!viewAll)}
             >
@@ -310,7 +310,7 @@ export default function HomePage() {
                   </Avatar>
                   <div>
                     <CardTitle>{u.username}</CardTitle>
-                    <CardDescription>Skill Swapper</CardDescription>
+                    <CardDescription>Skill-Issue User</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="flex-grow space-y-4">
