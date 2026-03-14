@@ -18,6 +18,7 @@ export const allLearningStyles: LearningStyle[] = [
 export type User = {
   id: string;
   username: string;
+  fullName: string;
   email: string;
   password?: string; // Should not be sent to client
   avatarUrl: string;

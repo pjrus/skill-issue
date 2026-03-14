@@ -13,8 +13,9 @@ Represents a user's profile in the application.
 - **Collection Path:** `/users/{userId}`
 - **Schema:**
   - `username` (string): The user's public display name.
+  - `fullName` (string): The user's full name.
   - `email` (string): The user's email address (must be a valid email format).
-  - `avatarUrl` (string): A URL to the user's profile picture.
+  - `avatarUrl` (string): A URL to the user's profile picture (stored in Firebase Storage).
   - `bio` (string): A short user biography.
   - `skillsOffered` (list of strings): Skills the user can teach.
   - `skillsWanted` (list of strings): Skills the user wants to learn.

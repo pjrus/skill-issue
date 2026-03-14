@@ -10,8 +10,11 @@ import { Badge } from '@/components/ui/badge';
 import { allLearningStyles, type LearningStyle } from '@/types/userTypes';
 import { useToast } from '@/hooks/use-toast';
 import { databaseService } from '@/services/databaseService';
-import { useState, useEffect } from 'react';
-import { Loader2, X, Eye, EyeOff } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Loader2, X, Eye, EyeOff, Camera, User as UserIcon } from 'lucide-react';
+import { storage } from '@/firebase/config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 function SkillsInput({ title, skills, setSkills }: { title: string; skills: string[]; setSkills: (skills: string[]) => void; }) {
     const [currentSkill, setCurrentSkill] = useState('');
@@ -58,6 +61,8 @@ export default function SettingsPage() {
     const { user, updateUserContext } = useUser();
     const { toast } = useToast();
     const [bio, setBio] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [avatarUrl, setAvatarUrl] = useState('');
     const [skillsOffered, setSkillsOffered] = useState<string[]>([]);
     const [skillsWanted, setSkillsWanted] = useState<string[]>([]);
     const [learningStyles, setLearningStyles] = useState<LearningStyle[]>([]);
@@ -65,7 +70,9 @@ export default function SettingsPage() {
     const [geminiApiKey, setGeminiApiKey] = useState<string>('');
     const [showApiKey, setShowApiKey] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
     const [availableModels, setAvailableModels] = useState<{id: string, name: string}[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         const fetchModels = async () => {
@@ -86,10 +93,12 @@ export default function SettingsPage() {
 
     useEffect(() => {
         if (user) {
-            setBio(user.bio);
-            setSkillsOffered(user.skillsOffered);
-            setSkillsWanted(user.skillsWanted);
-            setLearningStyles(user.learningStyle);
+            setBio(user.bio || '');
+            setFullName(user.fullName || '');
+            setAvatarUrl(user.avatarUrl || '');
+            setSkillsOffered(user.skillsOffered || []);
+            setSkillsWanted(user.skillsWanted || []);
+            setLearningStyles(user.learningStyle || []);
             if (user.preferredModel) {
                 setPreferredModel(user.preferredModel);
             }
@@ -107,6 +116,35 @@ export default function SettingsPage() {
         }
     }
 
+    const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !user) return;
+
+        if (!file.type.startsWith('image/')) {
+            toast({ variant: 'destructive', title: 'Error', description: 'Please select an image file.' });
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            toast({ variant: 'destructive', title: 'Error', description: 'File size must be less than 5MB.' });
+            return;
+        }
+
+        setIsUploading(true);
+        try {
+            const storageRef = ref(storage, `users/${user.id}/profile_picture/${Date.now()}_${file.name}`);
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadUrl = await getDownloadURL(snapshot.ref);
+            setAvatarUrl(downloadUrl);
+            toast({ title: 'Success', description: 'Avatar uploaded. Click Save to persist changes.' });
+        } catch (error) {
+            console.error("Upload error:", error);
+            toast({ variant: 'destructive', title: 'Error', description: 'Failed to upload image.' });
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
     const handleSave = async () => {
         if (!user) return;
         setIsLoading(true);
@@ -120,6 +158,8 @@ export default function SettingsPage() {
 
             const updatedData = {
                 bio,
+                fullName,
+                avatarUrl,
                 skillsOffered,
                 skillsWanted,
                 learningStyle: learningStyles,
@@ -149,6 +189,37 @@ export default function SettingsPage() {
                     <CardDescription>Manage your profile and preferences.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                    <div className="flex flex-col items-center gap-4 mb-6">
+                        <div className="relative group">
+                            <Avatar className="h-24 w-24 border-2 border-primary/10">
+                                <AvatarImage src={avatarUrl} alt={fullName} />
+                                <AvatarFallback className="bg-primary/5">
+                                    <UserIcon className="h-12 w-12 text-muted-foreground" />
+                                </AvatarFallback>
+                            </Avatar>
+                            <button 
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={isUploading}
+                                className="absolute bottom-0 right-0 p-1.5 rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+                            >
+                                {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+                            </button>
+                            <input 
+                                type="file" 
+                                ref={fileInputRef} 
+                                onChange={handleAvatarUpload} 
+                                accept="image/*" 
+                                className="hidden" 
+                            />
+                        </div>
+                        <p className="text-sm text-muted-foreground">Click the camera icon to update your profile photo.</p>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="fullName">Full Name</Label>
+                        <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Jane Doe" />
+                    </div>
+
                     <div className="grid gap-2">
                         <Label htmlFor="bio">Your Bio</Label>
                         <Textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell us about yourself..." />

@@ -5,6 +5,7 @@ import type { Auth } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
 import { initializeFirebase } from '.';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
+import { UserProvider } from './auth/use-user';
 
 interface FirebaseContextValue {
   firebaseApp: FirebaseApp;
@@ -18,8 +19,10 @@ export const FirebaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const services = useMemo(() => initializeFirebase(), []);
   return (
     <FirebaseContext.Provider value={services}>
-      {children}
-      <FirebaseErrorListener />
+      <UserProvider>
+        {children}
+        <FirebaseErrorListener />
+      </UserProvider>
     </FirebaseContext.Provider>
   );
 };
