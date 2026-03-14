@@ -69,27 +69,29 @@ export default function BookingPage({ params }: { params: { matchId: string } })
           <CardTitle>Book a session with {otherUser.username}</CardTitle>
           <CardDescription>Select a date and time that works for both of you.</CardDescription>
         </CardHeader>
-        <CardContent className="grid md:grid-cols-2 gap-8">
-          <div className="flex flex-col items-center">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              className="rounded-md border"
-              disabled={(d) => d < new Date(new Date().toDateString())}
-            />
+        <CardContent className="flex flex-col md:flex-row gap-8 p-6 md:p-8">
+          <div className="flex flex-col items-center md:items-end justify-start md:w-1/2">
+            <div className="bg-card w-fit border rounded-xl shadow-sm overflow-hidden">
+                <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                className="p-3"
+                disabled={(d) => d < new Date(new Date().toDateString())}
+                />
+            </div>
           </div>
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">
-                Available Times for {date ? format(date, 'PPP') : 'selected date'}
+          <div className="space-y-6 md:w-1/2">
+            <h3 className="text-lg font-semibold tracking-tight border-b pb-2">
+                Available Times for {date ? format(date, 'MMM do, yyyy') : 'selected date'}
             </h3>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-3">
                 {timeSlots.map(time => (
                     <Button 
                         key={time}
                         variant={selectedTime === time ? "default" : "outline"}
                         onClick={() => setSelectedTime(time)}
-                        className={cn(selectedTime === time && "bg-primary text-primary-foreground")}
+                        className={cn(selectedTime === time && "bg-primary text-primary-foreground font-semibold shadow-inner")}
                     >
                         {time}
                     </Button>

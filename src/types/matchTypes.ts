@@ -7,6 +7,7 @@ export type Match = {
     aToB: string[]; // Skills user A can teach user B
     bToA: string[]; // Skills user B can teach user A
   };
+  score: number;
   aiSummary: string;
   status: 'pending' | 'accepted' | 'declined';
 };

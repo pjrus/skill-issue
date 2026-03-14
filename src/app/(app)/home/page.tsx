@@ -74,28 +74,55 @@ function MatchCard({ match }: { match: Match }) {
                 </Avatar>
                 <div>
                     <CardTitle>{otherUser.username}</CardTitle>
-                    <CardDescription>Potential skill swap</CardDescription>
+                    <CardDescription>{match.score > 0 ? "Potential skill swap" : "User on platform"}</CardDescription>
                 </div>
             </CardHeader>
             <CardContent className="flex-grow space-y-4">
                  <p className="text-sm text-muted-foreground italic">"{match.aiSummary}"</p>
                 
-                 {skillsYouGet.length > 0 && (
-                 <div className="space-y-2">
-                    <h4 className="text-sm font-semibold">You will learn:</h4>
-                    <div className="flex flex-wrap gap-2">
-                         {skillsYouGet.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
-                    </div>
-                </div>
-                )}
-                {skillsYouGive.length > 0 && (
-                <div className="space-y-2">
-                    <h4 className="text-sm font-semibold">You will teach:</h4>
-                     <div className="flex flex-wrap gap-2">
-                        {skillsYouGive.map(skill => <Badge key={skill}>{skill}</Badge>)}
-                    </div>
-                </div>
-                )}
+                 {match.score > 0 ? (
+                     <>
+                        {skillsYouGet.length > 0 && (
+                         <div className="space-y-2">
+                            <h4 className="text-sm font-semibold">You will learn:</h4>
+                            <div className="flex flex-wrap gap-2">
+                                 {skillsYouGet.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
+                            </div>
+                        </div>
+                        )}
+                        {skillsYouGive.length > 0 && (
+                        <div className="space-y-2">
+                            <h4 className="text-sm font-semibold">You will teach:</h4>
+                             <div className="flex flex-wrap gap-2">
+                                {skillsYouGive.map(skill => <Badge key={skill}>{skill}</Badge>)}
+                            </div>
+                        </div>
+                        )}
+                     </>
+                 ) : (
+                     <>
+                         <div className="space-y-2">
+                            <h4 className="text-sm font-semibold">They know:</h4>
+                            <div className="flex flex-wrap gap-2">
+                                {otherUser.skillsOffered.length > 0 ? (
+                                    otherUser.skillsOffered.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)
+                                ) : (
+                                    <span className="text-sm text-muted-foreground">None listed</span>
+                                )}
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <h4 className="text-sm font-semibold">They want to learn:</h4>
+                            <div className="flex flex-wrap gap-2">
+                                {otherUser.skillsWanted.length > 0 ? (
+                                    otherUser.skillsWanted.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)
+                                ) : (
+                                    <span className="text-sm text-muted-foreground">None listed</span>
+                                )}
+                            </div>
+                        </div>
+                     </>
+                 )}
             </CardContent>
             <CardFooter>
                 <Button className="w-full" onClick={() => router.push(`/booking/${match.id}`)}>
@@ -111,6 +138,7 @@ export default function HomePage() {
   const { user, updateUserContext } = useUser();
   const { toast } = useToast();
   const [matches, setMatches] = useState<Match[]>([]);
+  const [showAllUsers, setShowAllUsers] = useState(false);
   const [isLoadingMatches, setIsLoadingMatches] = useState(true);
   
   const [learnInput, setLearnInput] = useState('');
@@ -148,9 +176,12 @@ export default function HomePage() {
         apiKey: user.apiKey
       });
       
+      const newSkillsOffered = Array.from(new Set([...user.skillsOffered, ...result.skillsOffered]));
+      const newSkillsWanted = Array.from(new Set([...user.skillsWanted, ...result.skillsWanted]));
+
       const updatedUser = await databaseService.updateUser(user.id, {
-        skillsOffered: result.skillsOffered,
-        skillsWanted: result.skillsWanted,
+        skillsOffered: newSkillsOffered,
+        skillsWanted: newSkillsWanted,
       });
       if (updatedUser) {
         updateUserContext(updatedUser);
@@ -219,9 +250,16 @@ export default function HomePage() {
 
       {/* Recommended Matches Section Below */}
       <div>
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold tracking-tight">Recommended Matches</h2>
-          <p className="text-muted-foreground mt-1">People who fit what you're looking for, sorted by relevance.</p>
+        <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Recommended Matches</h2>
+            <p className="text-muted-foreground mt-1">People who fit what you're looking for, sorted by relevance.</p>
+          </div>
+          {matches.filter(m => m.score === 0).length > 0 && (
+            <Button variant="outline" onClick={() => setShowAllUsers(!showAllUsers)}>
+              {showAllUsers ? "Show Recommended Only" : "Show All Users"}
+            </Button>
+          )}
         </div>
         
         {isLoadingMatches ? (
@@ -230,22 +268,29 @@ export default function HomePage() {
               <MatchCardSkeleton />
               <MatchCardSkeleton />
           </div>
-        ) : matches.length === 0 ? (
+        ) : matches.filter(m => m.score > 0).length === 0 && !showAllUsers ? (
            <Card className="col-span-full mt-2 flex flex-col items-center justify-center py-16 text-center border-dashed">
               <CardHeader>
                   <div className="mx-auto bg-secondary p-3 rounded-full">
                       <Users className="h-8 w-8 text-muted-foreground" />
                   </div>
-                  <CardTitle>No Matches Found</CardTitle>
+                  <CardTitle>No Direct Matches Found</CardTitle>
                   <CardDescription>
-                      We couldn't find any partners for you yet. <br/>
-                      Try using the search above to update your skills and broaden your horizons!
+                      We couldn't find any direct partners for you yet. <br/>
+                      {matches.length > 0 
+                        ? "But you can still browse everyone on the platform!" 
+                        : "Try using the search above to update your skills and broaden your horizons!"}
                   </CardDescription>
               </CardHeader>
+              {matches.length > 0 && (
+                  <CardFooter>
+                      <Button onClick={() => setShowAllUsers(true)}>Show all users</Button>
+                  </CardFooter>
+              )}
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {matches.map(match => (
+            {(showAllUsers ? matches : matches.filter(m => m.score > 0)).map(match => (
               <MatchCard key={match.id} match={match} />
             ))}
           </div>

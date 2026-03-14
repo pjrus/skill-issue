@@ -41,9 +41,7 @@ export const matchingService = {
           score = 1; // Teaching match: You teach what they want to learn
         }
 
-        if (score > 0) {
-          validMatches.push({ userA: currentUser, userB: otherUser, aToB, bToA, score });
-        }
+        validMatches.push({ userA: currentUser, userB: otherUser, aToB, bToA, score });
       }
 
       // Sort based on match score
@@ -52,29 +50,36 @@ export const matchingService = {
       const enrichedMatches: Match[] = [];
 
       for (const match of validMatches) {
-        try {
-          const summary = await aiService.generateMatchSummary({
-            studentASkillsOffered: match.userA.skillsOffered,
-            studentAWants: match.userA.skillsWanted,
-            studentBSkillsOffered: match.userB.skillsOffered,
-            studentBWants: match.userB.skillsWanted,
-            model: match.userA.preferredModel,
-            apiKey: match.userA.apiKey,
-          });
-
-          enrichedMatches.push({
-            id: `${match.userA.id}-${match.userB.id}`,
-            users: [match.userA, match.userB],
-            matchedSkills: {
-              aToB: match.aToB,
-              bToA: match.bToA,
-            },
-            aiSummary: summary.summary,
-            status: 'pending',
-          });
-        } catch (error) {
-          console.error("Failed to generate AI summary for match:", match, error);
+        let aiSummaryText = "Discover more about their skills and connect!";
+        
+        if (match.score > 0) {
+          try {
+            const summary = await aiService.generateMatchSummary({
+              studentASkillsOffered: match.userA.skillsOffered,
+              studentAWants: match.userA.skillsWanted,
+              studentBSkillsOffered: match.userB.skillsOffered,
+              studentBWants: match.userB.skillsWanted,
+              model: match.userA.preferredModel,
+              apiKey: match.userA.apiKey,
+            });
+            aiSummaryText = summary.summary;
+          } catch (error) {
+            console.error("Failed to generate AI summary for match:", match, error);
+            aiSummaryText = "We found some overlapping skills. Connect and learn from each other!";
+          }
         }
+
+        enrichedMatches.push({
+          id: `${match.userA.id}-${match.userB.id}`,
+          users: [match.userA, match.userB],
+          matchedSkills: {
+            aToB: match.aToB,
+            bToA: match.bToA,
+          },
+          score: match.score,
+          aiSummary: aiSummaryText,
+          status: 'pending',
+        });
       }
 
       setTimeout(() => {

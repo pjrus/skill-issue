@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from 'next/link';
 import { Icons } from '@/components/icons';
-import { LayoutDashboard, LifeBuoy, LogOut, Settings, Users, Loader2 } from 'lucide-react';
+import { LayoutDashboard, LifeBuoy, LogOut, Settings, Users, Loader2, Bell } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 
 function Header() {
@@ -55,7 +55,27 @@ function Header() {
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center space-x-1">
+          <nav className="flex items-center space-x-1 sm:space-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative h-9 w-9">
+                  <Bell className="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
+                  <span className="absolute top-2 right-2.5 h-1.5 w-1.5 rounded-full bg-destructive"></span>
+                  <span className="sr-only">Notifications</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer" onSelect={() => router.push('/matches')}>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">New Match Available!</p>
+                    <p className="text-xs text-muted-foreground mt-1">You have overlapping skills with 3 new users.</p>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Link href="/settings">
               <Button variant="ghost" size="icon" className="h-9 w-9">
                 <Settings className="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
