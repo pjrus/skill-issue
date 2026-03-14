@@ -35,33 +35,33 @@ function Header() {
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         <div className="flex gap-6 md:gap-10">
-          <Link href="/skills" className="flex items-center space-x-2">
+          <Link href="/home" className="flex items-center space-x-2">
             <Icons.logo className="h-6 w-6 text-primary" />
             <span className="inline-block font-bold">SkillSwap</span>
           </Link>
-          <nav className="hidden md:flex gap-6">
+          <nav className="hidden md:flex gap-6 items-center">
             <Link
-              href="/skills"
+              href="/home"
+              className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              Home
+            </Link>
+            <Link
+              href="/my-skills"
               className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
             >
               My Skills
-            </Link>
-            <Link
-              href="/matches"
-              className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              Matches
-            </Link>
-             <Link
-              href="/settings"
-              className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              Settings
             </Link>
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
+            <Link href="/settings">
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Settings className="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
+                <span className="sr-only">Settings</span>
+              </Button>
+            </Link>
             <ThemeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -83,17 +83,17 @@ function Header() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem onSelect={()=> router.push('/skills')}>
+                  <DropdownMenuItem onSelect={()=> router.push('/my-skills')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
-                    <span>Dashboard</span>
+                    <span>My Skills</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={()=> router.push('/settings')}>
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={()=> router.push('/matches')}>
+                  <DropdownMenuItem onSelect={()=> router.push('/home')}>
                     <Users className="mr-2 h-4 w-4" />
-                    <span>Matches</span>
+                    <span>Home</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

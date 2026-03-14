@@ -20,7 +20,7 @@ export const matchingService = {
         (user) => user.id !== currentUserId
       );
 
-      const validMatches: { userA: User; userB: User; aToB: string[], bToA: string[] }[] = [];
+      const validMatches: { userA: User; userB: User; aToB: string[], bToA: string[], score: number }[] = [];
 
       for (const otherUser of potentialMatches) {
         const currentUserWants = currentUser.skillsWanted.map(s => s.toLowerCase());
@@ -32,10 +32,22 @@ export const matchingService = {
         const aToB = currentUserOffers.filter(skill => otherUserWants.includes(skill));
         const bToA = otherUserOffers.filter(skill => currentUserWants.includes(skill));
 
+        let score = 0;
         if (aToB.length > 0 && bToA.length > 0) {
-          validMatches.push({ userA: currentUser, userB: otherUser, aToB, bToA });
+          score = 3; // Mutual match
+        } else if (bToA.length > 0) {
+          score = 2; // Learning match: They teach what you want to learn
+        } else if (aToB.length > 0) {
+          score = 1; // Teaching match: You teach what they want to learn
+        }
+
+        if (score > 0) {
+          validMatches.push({ userA: currentUser, userB: otherUser, aToB, bToA, score });
         }
       }
+
+      // Sort based on match score
+      validMatches.sort((a, b) => b.score - a.score);
 
       const enrichedMatches: Match[] = [];
 

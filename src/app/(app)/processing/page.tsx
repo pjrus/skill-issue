@@ -8,7 +8,7 @@ export default function ProcessingPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/matches');
+      router.push('/home');
     }, 3000); // Simulate processing time
 
     return () => clearTimeout(timer);

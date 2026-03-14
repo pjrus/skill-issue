@@ -49,7 +49,7 @@ export function useUser(): UseUser {
       router.push('/login');
     }
     if (!isLoading && firebaseUser && isAuthPage) {
-      router.push('/skills');
+      router.push('/home');
     }
   }, [firebaseUser, isLoading, router, pathname]);
   
