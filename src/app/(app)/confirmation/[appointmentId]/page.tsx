@@ -151,9 +151,23 @@ export default function ConfirmationPage({ params }: { params: Promise<{ appoint
                 </div>
             </div>
 
-             <Button asChild size="lg" className="w-full" disabled={appointment.meetLink === 'https://meet.google.com/new' || !appointment.meetLink}>
-                <a href={appointment.meetLink} target="_blank" rel="noopener noreferrer">
-                    {appointment.meetLink === 'https://meet.google.com/new' || !appointment.meetLink ? 'Generating Meeting Space...' : 'Join Google Meet'}
+            <Button 
+                asChild 
+                size="lg" 
+                className="w-full" 
+                disabled={!appointment.meetLink || appointment.meetLink === 'https://meet.google.com/new'}
+            >
+                <a 
+                    href={appointment.meetLink && appointment.meetLink !== 'https://meet.google.com/new' ? appointment.meetLink : '#'} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                        if (!appointment.meetLink || appointment.meetLink === 'https://meet.google.com/new') {
+                            e.preventDefault();
+                        }
+                    }}
+                >
+                    {!appointment.meetLink || appointment.meetLink === 'https://meet.google.com/new' ? 'Generating Meeting Space...' : 'Join Google Meet'}
                     <ExternalLink className="ml-2 h-4 w-4" />
                 </a>
             </Button>

@@ -173,17 +173,21 @@ export default function BookingsPage() {
 function MeetLinkSection({ appt }: { appt: Appointment }) {
   const [currentLink, setCurrentLink] = useState(appt.meetLink);
   const [isUpgrading, setIsUpgrading] = useState(false);
+  const [hasTriedUpgrade, setHasTriedUpgrade] = useState(false);
 
   useEffect(() => {
     const upgradeLink = async () => {
-      if (currentLink === 'https://meet.google.com/new' || !currentLink) {
+      if ((currentLink === 'https://meet.google.com/new' || !currentLink) && !hasTriedUpgrade) {
         setIsUpgrading(true);
+        setHasTriedUpgrade(true);
         try {
           const response = await fetch('/api/meet/create', { method: 'POST' });
           if (response.ok) {
             const data = await response.json();
-            await databaseService.updateAppointment(appt.id, { meetLink: data.meetLink });
-            setCurrentLink(data.meetLink);
+            if (data.meetLink !== currentLink && data.meetLink !== 'https://meet.google.com/new') {
+              await databaseService.updateAppointment(appt.id, { meetLink: data.meetLink });
+              setCurrentLink(data.meetLink);
+            }
           }
         } catch (error) {
           console.error("Failed to upgrade placeholder link:", error);
@@ -193,10 +197,12 @@ function MeetLinkSection({ appt }: { appt: Appointment }) {
       }
     };
     upgradeLink();
-  }, [appt.id, currentLink]);
+  }, [appt.id, currentLink, hasTriedUpgrade]);
 
-  const displayLink = isUpgrading ? 'Generating real meeting link...' : (currentLink || 'No link generated yet');
-  const isPlaceholder = currentLink === 'https://meet.google.com/new' || !currentLink;
+  const isPlaceholder = currentLink === 'https://meet.google.com/new';
+  const displayLink = isUpgrading 
+    ? 'Generating real meeting link...' 
+    : (isPlaceholder ? 'Link generation failed' : (currentLink || 'No link generated yet'));
 
   return (
     <div className="bg-muted/50 p-6 rounded-xl space-y-4">
@@ -205,7 +211,7 @@ function MeetLinkSection({ appt }: { appt: Appointment }) {
           <Video className="h-5 w-5 text-primary" />
           <span>Meeting Details</span>
         </div>
-        {!isPlaceholder && !isUpgrading && (
+        {!isPlaceholder && !isUpgrading && currentLink && (
           <Button asChild size="sm" variant="default" className="shadow-sm">
             <a href={currentLink} target="_blank" rel="noopener noreferrer" className="gap-2">
               Join Meeting
@@ -218,10 +224,10 @@ function MeetLinkSection({ appt }: { appt: Appointment }) {
       <div className="flex flex-col gap-1">
         <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Meeting Link</span>
         <div className="flex items-center gap-2">
-          <code className="text-xs bg-background/50 px-2 py-1 rounded border border-border/40 font-mono text-muted-foreground truncate flex-1">
+          <code className={`text-xs px-2 py-1 rounded border border-border/40 font-mono truncate flex-1 ${isPlaceholder ? 'text-destructive bg-destructive/10' : 'text-muted-foreground bg-background/50'}`}>
             {displayLink}
           </code>
-          {!isPlaceholder && !isUpgrading && (
+          {!isPlaceholder && !isUpgrading && currentLink && (
             <Button 
               variant="ghost" 
               size="icon" 

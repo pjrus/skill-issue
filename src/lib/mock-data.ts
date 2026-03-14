@@ -4,6 +4,7 @@ import type { User } from '@/types/userTypes';
 export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   {
     username: 'alex',
+    fullName: 'alex',
     email: 'alex@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/1/200/200',
     bio: 'CS student passionate about open source and building cool things. I can help with backend development and love learning about new design trends.',
@@ -14,6 +15,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'brian',
+    fullName: 'brian',
     email: 'brian@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/2/200/200',
     bio: 'Design student with a knack for creating intuitive and beautiful user interfaces. Looking to get my hands dirty with some real code.',
@@ -24,6 +26,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'casey',
+    fullName: 'casey',
     email: 'casey@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/3/200/200',
     bio: 'Frontend developer who loves React. I want to expand my skills into mobile development.',
@@ -34,6 +37,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'drew',
+    fullName: 'drew',
     email: 'drew@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/4/200/200',
     bio: 'Mobile dev learning my way around Android. I can help with Java and Kotlin, but need help with server-side logic.',
@@ -44,6 +48,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'emily',
+    fullName: 'emily',
     email: 'emily@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/5/200/200',
     bio: 'Data scientist in training. I can teach you all about pandas and scikit-learn. I need to get better at visualizing my data.',
@@ -54,6 +59,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'frank',
+    fullName: 'frank',
     email: 'frank@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/6/200/200',
     bio: 'Product manager trying to understand the technical side better. I can offer insights into product strategy and user feedback analysis.',
@@ -64,6 +70,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'grace',
+    fullName: 'grace',
     email: 'grace@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/7/200/200',
     bio: 'I am a data analyst who is good with SQL and Tableau. I would like to learn python for data science.',
@@ -74,6 +81,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'heidi',
+    fullName: 'heidi',
     email: 'heidi@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/8/200/200',
     bio: 'DevOps engineer with experience in AWS and Docker. I want to learn more about front-end frameworks.',
@@ -84,6 +92,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'ivan',
+    fullName: 'ivan',
     email: 'ivan@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/9/200/200',
     bio: 'I am a writer and can help with copywriting and content strategy. I want to build my own blog from scratch.',
@@ -94,6 +103,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'judy',
+    fullName: 'judy',
     email: 'judy@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/10/200/200',
     bio: 'Cybersecurity analyst. I can teach about network security and ethical hacking. I want to learn about mobile app security.',
@@ -104,6 +114,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'karl',
+    fullName: 'karl',
     email: 'karl@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/11/200/200',
     bio: 'UX researcher. I can guide you through user interviews and usability testing. I am interested in learning data visualization.',
@@ -114,6 +125,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'linda',
+    fullName: 'linda',
     email: 'linda@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/12/200/200',
     bio: 'I am a game developer using Unity and C#. I want to learn about game design principles.',
@@ -124,6 +136,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'mike',
+    fullName: 'mike',
     email: 'mike@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/13/200/200',
     bio: 'Cloud architect with experience in Google Cloud Platform. Looking to learn more about container orchestration.',
@@ -134,6 +147,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'nancy',
+    fullName: 'nancy',
     email: 'nancy@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/14/200/200',
     bio: 'I am a tester and I am good at automation with Selenium. I want to learn performance testing.',
@@ -144,6 +158,7 @@ export const mockUsers: Omit<User, 'id' | 'password'>[] = [
   },
   {
     username: 'oscar',
+    fullName: 'oscar',
     email: 'oscar@skillissue.com',
     avatarUrl: 'https://picsum.photos/seed/15/200/200',
     bio: 'I am a photographer and I can teach you how to use a camera and edit photos. I want to create my own portfolio website.',

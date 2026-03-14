@@ -53,6 +53,7 @@ export const authService = {
     const username = firebaseUser.displayName || (firebaseUser.email ? firebaseUser.email.split('@')[0] : `user_${firebaseUser.uid.substring(0, 5)}`);
     const newUser: Omit<User, 'id'> = {
       username: username,
+      fullName: username,
       email: firebaseUser.email!,
       avatarUrl: firebaseUser.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/200/200`,
       bio: 'Just joined Skill-Issue!',
