@@ -16,6 +16,10 @@ const AIChatInputSchema = z.object({
     offered: z.array(z.string()).optional(),
     wanted: z.array(z.string()).optional(),
   }).optional(),
+  otherUsers: z.array(z.object({
+    offered: z.array(z.string()).optional(),
+    wanted: z.array(z.string()).optional(),
+  })).optional(),
 });
 
 export type AIChatInput = z.infer<typeof AIChatInputSchema>;
@@ -48,6 +52,11 @@ const chatFlow = ai.defineFlow(
 Your goal is to interview the user to learn about two things:
 1. What skills they can teach or offer others.
 2. What skills they want to learn from others.
+
+You also have access to the skills that other users on the platform are currently offering and wanting:
+${input.otherUsers?.map((u, i) => `User ${i + 1}: Offers [${u.offered?.join(', ') || 'None'}], Wants [${u.wanted?.join(', ') || 'None'}]`).join('\n') || 'No other users currently.'}
+
+If the user asks questions like "what skills can I offer to learn [Skill]", you can use the data above to tell them what skills are in demand by users who offer [Skill]. For example, if they want to learn Figma, find users who offer Figma and see what they want, then suggest those skills.
 
 The user currently has these skills saved on their profile:
 - Offered: ${input.existingSkills?.offered?.join(', ') || 'None'}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useUser } from '@/firebase';
 import type { Appointment } from '@/types/matchTypes';
 import { databaseService } from '@/services/databaseService';
@@ -21,7 +21,7 @@ function ConfirmationSkeleton() {
                     <Skeleton className="h-4 w-80" />
                 </CardHeader>
                 <CardContent className="space-y-6">
-                     <div className="flex justify-center items-center gap-4">
+                    <div className="flex justify-center items-center gap-4">
                         <Skeleton className="h-16 w-16 rounded-full" />
                         <Skeleton className="h-4 w-20" />
                         <Skeleton className="h-16 w-16 rounded-full" />
@@ -43,13 +43,14 @@ function ConfirmationSkeleton() {
     )
 }
 
-export default function ConfirmationPage({ params }: { params: { appointmentId: string } }) {
+export default function ConfirmationPage({ params }: { params: Promise<{ appointmentId: string }> }) {
+  const { appointmentId } = use(params);
   const { user: currentUser } = useUser();
   const [appointment, setAppointment] = useState<Appointment | null>(null);
 
   useEffect(() => {
-    databaseService.getAppointment(params.appointmentId).then(setAppointment);
-  }, [params.appointmentId]);
+    databaseService.getAppointment(appointmentId).then(setAppointment);
+  }, [appointmentId]);
 
   if (!currentUser || !appointment) return <ConfirmationSkeleton />;
 

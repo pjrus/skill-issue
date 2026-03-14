@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from 'next/link';
 import { Icons } from '@/components/icons';
-import { LayoutDashboard, LifeBuoy, LogOut, Settings, Users, Loader2 } from 'lucide-react';
+import { LayoutDashboard, LifeBuoy, LogOut, Settings, Users, Loader2, Wand2 } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 
 function Header() {
@@ -35,11 +35,17 @@ function Header() {
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
         <div className="flex gap-6 md:gap-10">
-          <Link href="/skills" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
             <Icons.logo className="h-6 w-6 text-primary" />
             <span className="inline-block font-bold">SkillSwap</span>
           </Link>
           <nav className="hidden md:flex gap-6">
+            <Link
+              href="/"
+              className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              Home
+            </Link>
             <Link
               href="/skills"
               className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
@@ -47,21 +53,25 @@ function Header() {
               My Skills
             </Link>
             <Link
-              href="/matches"
+              href="/bookings"
               className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
             >
-              Matches
+              Bookings
             </Link>
-             <Link
-              href="/settings"
+            <Link
+              href="/ai-chat"
               className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
             >
-              Settings
+              AI Chat
             </Link>
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <nav className="flex items-center space-x-1">
+          <nav className="flex items-center space-x-2">
+            <Button variant="ghost" size="icon" className="hidden md:flex" onClick={() => router.push('/settings')} title="Settings">
+              <Settings className="h-5 w-5 text-muted-foreground" />
+              <span className="sr-only">Settings</span>
+            </Button>
             <ThemeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -83,17 +93,25 @@ function Header() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
+                  <DropdownMenuItem onSelect={()=> router.push('/')}>
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>Home</span>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onSelect={()=> router.push('/skills')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
-                    <span>Dashboard</span>
+                    <span>My Skills</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={()=> router.push('/bookings')}>
+                    <Users className="mr-2 h-4 w-4" />
+                    <span>Bookings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={()=> router.push('/ai-chat')}>
+                    <Wand2 className="mr-2 h-4 w-4" />
+                    <span>AI Chat</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={()=> router.push('/settings')}>
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onSelect={()=> router.push('/matches')}>
-                    <Users className="mr-2 h-4 w-4" />
-                    <span>Matches</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

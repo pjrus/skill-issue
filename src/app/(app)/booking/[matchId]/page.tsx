@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,8 @@ const timeSlots = [
   '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'
 ];
 
-export default function BookingPage({ params }: { params: { matchId: string } }) {
+export default function BookingPage({ params }: { params: Promise<{ matchId: string }> }) {
+  const { matchId } = use(params);
   const router = useRouter();
   const { user: currentUser } = useUser();
   const { toast } = useToast();
@@ -28,12 +29,12 @@ export default function BookingPage({ params }: { params: { matchId: string } })
   
   useEffect(() => {
     if (currentUser) {
-      const otherUserId = params.matchId.split('-').find(id => id !== currentUser.id);
+      const otherUserId = matchId.split('-').find(id => id !== currentUser.id);
       if(otherUserId) {
         databaseService.getUser(otherUserId).then(setOtherUser);
       }
     }
-  }, [currentUser, params.matchId]);
+  }, [currentUser, matchId]);
 
   const handleBooking = async () => {
     if (!date || !selectedTime || !currentUser || !otherUser) {
@@ -47,7 +48,7 @@ export default function BookingPage({ params }: { params: { matchId: string } })
 
     try {
         const appointment = await databaseService.createAppointment({
-            matchId: params.matchId,
+            matchId: matchId,
             users: [currentUser, otherUser],
             date: appointmentDateTime,
             meetLink: 'https://meet.google.com/new', // Placeholder link
