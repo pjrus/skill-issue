@@ -92,7 +92,7 @@ export default function AiChatPage() {
     setIsChatting(true);
 
     try {
-      const gptParams: AIChatInput = {
+      const gptParams: AIChatInput & { geminiApiKey?: string } = {
         history: currentHistory.map(m => ({ 
           role: m.role, 
           content: [{ text: m.content.replace("\n\nSKIIIIIIILZZZZZZZZZZ", "") }] 
@@ -107,7 +107,8 @@ export default function AiChatPage() {
         otherUsers: allUsers.map(u => ({
           offered: u.skillsOffered || [],
           wanted: u.skillsWanted || []
-        }))
+        })),
+        geminiApiKey: localStorage.getItem('geminiApiKey') || undefined,
       };
 
       const response = await aiService.chat(gptParams);

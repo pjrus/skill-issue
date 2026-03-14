@@ -11,7 +11,7 @@ import { allLearningStyles, type LearningStyle } from '@/types/userTypes';
 import { useToast } from '@/hooks/use-toast';
 import { databaseService } from '@/services/databaseService';
 import { useState, useEffect } from 'react';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, X, Eye, EyeOff } from 'lucide-react';
 
 function SkillsInput({ title, skills, setSkills }: { title: string; skills: string[]; setSkills: (skills: string[]) => void; }) {
     const [currentSkill, setCurrentSkill] = useState('');
@@ -62,6 +62,8 @@ export default function SettingsPage() {
     const [skillsWanted, setSkillsWanted] = useState<string[]>([]);
     const [learningStyles, setLearningStyles] = useState<LearningStyle[]>([]);
     const [preferredModel, setPreferredModel] = useState<string>('googleai/gemini-1.5-flash');
+    const [geminiApiKey, setGeminiApiKey] = useState<string>('');
+    const [showApiKey, setShowApiKey] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [availableModels, setAvailableModels] = useState<{id: string, name: string}[]>([]);
 
@@ -91,6 +93,9 @@ export default function SettingsPage() {
             if (user.preferredModel) {
                 setPreferredModel(user.preferredModel);
             }
+            // Load API key from localStorage (never stored in Firestore)
+            const storedKey = localStorage.getItem('geminiApiKey') || '';
+            setGeminiApiKey(storedKey);
         }
     }, [user]);
 
@@ -106,6 +111,13 @@ export default function SettingsPage() {
         if (!user) return;
         setIsLoading(true);
         try {
+            // Save API key to localStorage only (never sent to Firestore)
+            if (geminiApiKey.trim()) {
+                localStorage.setItem('geminiApiKey', geminiApiKey.trim());
+            } else {
+                localStorage.removeItem('geminiApiKey');
+            }
+
             const updatedData = {
                 bio,
                 skillsOffered,
@@ -179,6 +191,44 @@ export default function SettingsPage() {
                                 <option value="googleai/gemini-1.5-flash">Gemini 1.5 Flash</option>
                             )}
                         </select>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="apiKey">Gemini API Key Override</Label>
+                        <p className="text-xs text-muted-foreground">
+                            Provide your own <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="underline">Google AI Studio</a> key to use instead of the platform default. Leave blank to use the shared key.
+                        </p>
+                        <div className="flex gap-2">
+                            <div className="relative flex-1">
+                                <Input
+                                    id="apiKey"
+                                    type={showApiKey ? 'text' : 'password'}
+                                    value={geminiApiKey}
+                                    onChange={(e) => setGeminiApiKey(e.target.value)}
+                                    placeholder="AIza..."
+                                    className="pr-10 font-mono text-sm"
+                                    autoComplete="off"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowApiKey(v => !v)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                >
+                                    {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                            </div>
+                            {geminiApiKey && (
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    type="button"
+                                    onClick={() => setGeminiApiKey('')}
+                                    title="Clear API key"
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            )}
+                        </div>
                     </div>
 
                     <Button onClick={handleSave} disabled={isLoading}>
