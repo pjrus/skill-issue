@@ -107,16 +107,53 @@ export const databaseService = {
         return null;
     }
 
+    const userA = users[0];
+    const userB = users[1];
+
     return {
         ...apptData,
         id: apptSnap.id,
         date: (apptData.date as Timestamp).toDate(),
-        users: [users[0], users[1]]
+        users: [userA, userB],
     } as Appointment;
   },
 
   updateAppointment: async (id: string, data: Partial<Appointment>): Promise<void> => {
     const apptRef = doc(db, 'appointments', id);
     await updateDoc(apptRef, data as any);
+  },
+
+  sendBookingConfirmationEmail: async (appointment: Appointment): Promise<void> => {
+    const mailCollection = collection(db, 'mail');
+    
+    // Send to each participant
+    const emailPromises = appointment.users.map(async (user) => {
+      const otherUser = appointment.users.find(u => u.id !== user.id);
+      
+      const emailDoc = {
+        to: user.email,
+        message: {
+          subject: `Booking Confirmation: Mini-session with ${otherUser?.username}`,
+          html: `
+            <div style="font-family: sans-serif; line-height: 1.6; color: #333;">
+              <h2>Nice! Your skill swap is confirmed.</h2>
+              <p>Hello ${user.username},</p>
+              <p>You've successfully booked a session with <strong>${otherUser?.username}</strong>.</p>
+              <div style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 0;"><strong>Session Details:</strong></p>
+                <p style="margin: 5px 0;">Date: ${appointment.date.toLocaleDateString()} at ${appointment.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                ${appointment.meetLink ? `<p style="margin: 5px 0;">Meeting Link: <a href="${appointment.meetLink}">${appointment.meetLink}</a></p>` : ''}
+              </div>
+              <p>Happy swapping!</p>
+              <p>Best,<br>The SkillSwap Team</p>
+            </div>
+          `,
+        },
+      };
+      
+      return addDoc(mailCollection, emailDoc);
+    });
+
+    await Promise.all(emailPromises);
   },
 };

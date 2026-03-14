@@ -12,7 +12,7 @@ import type { User } from '@/types/userTypes';
 import { useToast } from '@/hooks/use-toast';
 import { add, format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Loader2, ChevronLeft, Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { Loader2, ChevronLeft, Calendar as CalendarIcon, Clock, BookOpen, GraduationCap } from 'lucide-react';
 
 const timeSlots = [
   '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'
@@ -28,6 +28,10 @@ export default function BookingPage({ params }: { params: Promise<{ matchId: str
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   
+  const [selectedTeachingSkill, setSelectedTeachingSkill] = useState<string | null>(null);
+  const [selectedLearningSkill, setSelectedLearningSkill] = useState<string | null>(null);
+  const [swaps, setSwaps] = useState<{ teaching: string[], learning: string[] }>({ teaching: [], learning: [] });
+  
   useEffect(() => {
     if (currentUser) {
       const otherUserId = matchId.split('-').find(id => id !== currentUser.id);
@@ -37,10 +41,23 @@ export default function BookingPage({ params }: { params: Promise<{ matchId: str
     }
   }, [currentUser, matchId]);
 
+  useEffect(() => {
+    if (currentUser && otherUser) {
+      const teaching = (currentUser.skillsOffered || []).filter(skill => 
+        (otherUser.skillsWanted || []).some(wanted => wanted.toLowerCase() === skill.toLowerCase())
+      );
+      const learning = (otherUser.skillsOffered || []).filter(skill => 
+        (currentUser.skillsWanted || []).some(wanted => wanted.toLowerCase() === skill.toLowerCase())
+      );
+      setSwaps({ teaching, learning });
+      if (teaching.length > 0) setSelectedTeachingSkill(teaching[0]);
+      if (learning.length > 0) setSelectedLearningSkill(learning[0]);
+    }
+  }, [currentUser, otherUser]);
 
   const handleBooking = async () => {
-    if (!date || !selectedTime || !currentUser || !otherUser) {
-        toast({ variant: 'destructive', title: 'Please select a date and time.' });
+    if (!date || !selectedTime || !currentUser || !otherUser || !selectedTeachingSkill || !selectedLearningSkill) {
+        toast({ variant: 'destructive', title: 'Please select a date, time, and skills to swap.' });
         return;
     }
     setIsLoading(true);
@@ -67,7 +84,14 @@ export default function BookingPage({ params }: { params: Promise<{ matchId: str
             date: appointmentDateTime,
             meetLink: meetLink,
             status: 'scheduled',
+            teachingSkill: selectedTeachingSkill,
+            learningSkill: selectedLearningSkill,
         });
+
+        // Trigger confirmation emails
+        await databaseService.sendBookingConfirmationEmail(appointment)
+            .catch(err => console.error("Failed to send confirmation emails:", err));
+
         router.push(`/confirmation/${appointment.id}`);
     } catch (error: any) {
         toast({ 
@@ -155,6 +179,55 @@ export default function BookingPage({ params }: { params: Promise<{ matchId: str
                     )}
                   </button>
                 ))}
+              </div>
+
+              {/* Skill Swap Selection */}
+              <div className="mt-10 space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 font-semibold">
+                    <GraduationCap className="h-4 w-4 text-primary" />
+                    What will you teach?
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {swaps.teaching.map(skill => (
+                      <button
+                        key={skill}
+                        onClick={() => setSelectedTeachingSkill(skill)}
+                        className={cn(
+                          "px-4 py-2 rounded-full border-2 transition-all text-sm font-medium",
+                          selectedTeachingSkill === skill
+                            ? "bg-primary/10 border-primary text-primary shadow-sm"
+                            : "border-border/40 hover:border-primary/30 text-muted-foreground"
+                        )}
+                      >
+                        {skill}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 font-semibold">
+                    <BookOpen className="h-4 w-4 text-primary" />
+                    What will you learn?
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {swaps.learning.map(skill => (
+                      <button
+                        key={skill}
+                        onClick={() => setSelectedLearningSkill(skill)}
+                        className={cn(
+                          "px-4 py-2 rounded-full border-2 transition-all text-sm font-medium",
+                          selectedLearningSkill === skill
+                            ? "bg-primary/10 border-primary text-primary shadow-sm"
+                            : "border-border/40 hover:border-primary/30 text-muted-foreground"
+                        )}
+                      >
+                        {skill}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             </CardContent>
 

@@ -191,7 +191,7 @@ export default function ConfirmationPage({ params }: { params: Promise<{ appoint
               </Button>
             </div>
 
-            <p className="text-xs text-center text-muted-foreground">A calendar invite has been sent to your email (simulated).</p>
+            <p className="text-xs text-center text-muted-foreground">A confirmation email has been sent to <strong>{currentUser.email}</strong>.</p>
         </CardContent>
       </Card>
     </div>

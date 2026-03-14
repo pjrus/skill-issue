@@ -18,4 +18,6 @@ export type Appointment = {
   date: Date;
   meetLink: string;
   status: 'scheduled' | 'completed' | 'cancelled';
+  teachingSkill: string;
+  learningSkill: string;
 };

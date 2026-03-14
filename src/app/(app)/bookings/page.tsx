@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Video, Clock, Download, ExternalLink, Copy } from 'lucide-react';
+import { Calendar, Video, Clock, Download, ExternalLink, Copy, GraduationCap, BookOpen } from 'lucide-react';
 import { Icons } from '@/components/icons';
 import { databaseService } from '@/services/databaseService';
 import type { Appointment } from '@/types/matchTypes';
@@ -128,6 +128,7 @@ export default function BookingsPage() {
         <div className="grid gap-6">
           {appointments.map((appt) => {
              const otherUser = appt.users.find(u => u.id !== user?.id) || appt.users[0];
+             const isInitiator = appt.users[0].id === user?.id;
              
              return (
               <Card key={appt.id}>
@@ -147,7 +148,31 @@ export default function BookingsPage() {
                     {appt.status.charAt(0).toUpperCase() + appt.status.slice(1)}
                   </Badge>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-6">
+                      <div className="space-y-4 pt-2">
+                        <div className="space-y-2">
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                            <GraduationCap className="h-3.5 w-3.5" />
+                            {isInitiator ? "You're teaching" : "They're teaching"}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 px-3 py-1">
+                              {appt.teachingSkill}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                            <BookOpen className="h-3.5 w-3.5" />
+                            {isInitiator ? "You're learning" : "They're learning"}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            <Badge variant="secondary" className="bg-secondary/20 text-secondary-foreground border-secondary/30 px-3 py-1">
+                              {appt.learningSkill}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
                    <MeetLinkSection appt={appt} />
                 </CardContent>
                 <CardFooter className="border-t pt-4">

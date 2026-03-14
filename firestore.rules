@@ -31,10 +31,12 @@ service cloud.firestore {
       return data.matchId is string
         && data.userIds is list
         && data.date is timestamp
-        // meetLink is optional
-        && (!('meetLink' in data) || data.meetLink is string)
         && data.status is string
-        && (data.status == 'scheduled' || data.status == 'completed' || data.status == 'cancelled');
+        && (data.status == 'scheduled' || data.status == 'completed' || data.status == 'cancelled')
+        && data.teachingSkill is string
+        && data.learningSkill is string
+        // meetLink is optional
+        && (!('meetLink' in data) || data.meetLink is string);
     }
 
     match /users/{userId} {
@@ -68,6 +70,12 @@ service cloud.firestore {
                       && request.auth.uid in request.resource.data.userIds 
                       && request.resource.data.userIds.size() == 2
                       && isValidAppointment(request.resource.data);
+    }
+
+    match /mail/{mailId} {
+      // Users can only create mail documents to trigger the extension.
+      // They should not be able to read or modify them once sent for security.
+      allow create: if isAuth();
     }
   }
 }

@@ -35,6 +35,8 @@ Represents a scheduled meeting between two users.
   - `date` (timestamp): The scheduled date and time of the appointment.
   - `meetLink` (string, optional): The URL for the video call.
   - `status` (string): The status of the appointment (`scheduled`, `completed`, `cancelled`).
+  - `teachingSkill` (string): The specific skill the initiator is teaching.
+  - `learningSkill` (string): The specific skill the initiator is learning.
 
 ## Firestore Security Rules
 
