@@ -27,4 +27,5 @@ export type User = {
   learningStyle: LearningStyle[];
   availability: string;
   preferredModel?: string;
+  apiKey?: string;
 };

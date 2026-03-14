@@ -15,6 +15,7 @@ const AISkillExtractionInputSchema = z.object({
     .string()
     .describe('A natural language description of skills the user offers and needs.'),
   model: z.string().optional().describe('The AI model to use.'),
+  apiKey: z.string().optional().describe('An optional API key to use for the model.'),
 });
 export type AISkillExtractionInput = z.infer<typeof AISkillExtractionInputSchema>;
 
@@ -58,7 +59,9 @@ const extractSkillsFlow = ai.defineFlow(
     outputSchema: AISkillExtractionOutputSchema,
   },
   async input => {
-    const options = input.model ? { model: input.model } : undefined;
+    const options: any = {};
+    if (input.model) options.model = input.model;
+    if (input.apiKey) options.config = { apiKey: input.apiKey };
     const {output} = await extractSkillsPrompt(input, options);
     return output!;
   }

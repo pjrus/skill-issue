@@ -142,7 +142,11 @@ export default function HomePage() {
     setIsExtracting(true);
     try {
       const description = `I want to learn: ${learnInput || "nothing"}. I want to teach: ${teachInput || "nothing"}.`;
-      const result = await aiService.extractSkillsFromText({ description, model: user.preferredModel });
+      const result = await aiService.extractSkillsFromText({ 
+        description, 
+        model: user.preferredModel,
+        apiKey: user.apiKey
+      });
       
       const updatedUser = await databaseService.updateUser(user.id, {
         skillsOffered: result.skillsOffered,

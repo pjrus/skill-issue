@@ -62,6 +62,7 @@ export default function SettingsPage() {
     const [skillsWanted, setSkillsWanted] = useState<string[]>([]);
     const [learningStyles, setLearningStyles] = useState<LearningStyle[]>([]);
     const [preferredModel, setPreferredModel] = useState<string>('googleai/gemini-1.5-flash');
+    const [apiKey, setApiKey] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
     const [availableModels, setAvailableModels] = useState<{id: string, name: string}[]>([]);
 
@@ -91,6 +92,9 @@ export default function SettingsPage() {
             if (user.preferredModel) {
                 setPreferredModel(user.preferredModel);
             }
+            if (user.apiKey) {
+                setApiKey(user.apiKey);
+            }
         }
     }, [user]);
 
@@ -112,6 +116,7 @@ export default function SettingsPage() {
                 skillsWanted,
                 learningStyle: learningStyles,
                 preferredModel,
+                apiKey: apiKey.trim() || undefined,
             }
             const updatedUser = await databaseService.updateUser(user.id, updatedData);
             if(updatedUser) {
@@ -179,6 +184,18 @@ export default function SettingsPage() {
                                 <option value="googleai/gemini-1.5-flash">Gemini 1.5 Flash</option>
                             )}
                         </select>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="apiKey">AI API Key Override (Optional)</Label>
+                        <Input
+                            id="apiKey"
+                            type="password"
+                            value={apiKey}
+                            onChange={(e) => setApiKey(e.target.value)}
+                            placeholder="Leave blank to use default key"
+                        />
+                        <p className="text-xs text-muted-foreground">Override the default system AI key with your own if needed.</p>
                     </div>
 
                     <Button onClick={handleSave} disabled={isLoading}>
