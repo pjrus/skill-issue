@@ -76,7 +76,7 @@ export default function LoginPage() {
         await createUserWithEmailAndPassword(auth, email, password);
         toast({
             title: "Account Created",
-            description: "Welcome to SkillSwap!",
+            description: "Welcome to Skill Issue!",
         });
     } catch(error: any) {
         toast({
@@ -104,7 +104,7 @@ export default function LoginPage() {
             <div className="flex flex-col space-y-2 text-center">
                 <Icons.logo className="mx-auto h-8 w-8 text-primary"/>
                 <h1 className="text-2xl font-semibold tracking-tight">
-                    Welcome to SkillSwap
+                    Welcome to Skill Issue
                 </h1>
                 <p className="text-sm text-muted-foreground">
                     Sign in or create an account to get started

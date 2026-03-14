@@ -48,7 +48,7 @@ const chatFlow = ai.defineFlow(
     const options = input.model ? { model: input.model } : undefined;
 
     const chat = ai.generate({
-      system: `You are a friendly and interactive AI assistant on the SkillSwap platform. 
+      system: `You are a friendly and interactive AI assistant on the Skill Issue platform. 
 Your goal is to interview the user to learn about two things:
 1. What skills they can teach or offer others.
 2. What skills they want to learn from others.

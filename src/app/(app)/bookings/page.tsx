@@ -83,7 +83,7 @@ export default function BookingsPage() {
               </div>
             <CardTitle>No upcoming bookings</CardTitle>
             <CardDescription>
-              Connect with Skill Swappers on the homepage to schedule a session!
+              Connect with Skill Issuers on the homepage to schedule a session!
             </CardDescription>
           </CardHeader>
         </Card>
