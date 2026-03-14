@@ -17,3 +17,9 @@
 - Utilize simple, clean line-art icons that complement the modern SaaS aesthetic. Icons should be clear and universally recognizable, such as those indicating profile settings, skill tags, calendar dates, and chat messages.
 - The layout features a 'modern student SaaS' style, characterized by a clean and intuitive structure. Key elements are organized within Tailwind CSS-styled cards and rounded panels, featuring soft shadows to add depth. Dark mode support is global, providing a consistent user experience.
 - Implement subtle loading skeletons for data fetching and soft transition animations, especially on the 'Processing Page', to enhance user experience during waiting times, creating a smooth and professional feel. Elements such as card expansions or modal displays should also feature smooth, understated transitions.
+
+## Documentation Map
+
+- `architecture.md`: Implementation-focused code hierarchy and Firebase integration walkthrough.
+- `schema.md`: Firestore data model and security rule explanation.
+- `backend.json`: Structured backend entity and collection metadata.

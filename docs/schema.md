@@ -2,6 +2,8 @@
 
 This document outlines the data schema for the SkillSwap application and the corresponding Firestore Security Rules to protect user data.
 
+For code-level architecture and Firebase wiring details (providers, auth flow, service/hook layers), see `docs/architecture.md`.
+
 ## Data Models
 
 The application uses two main data models: `User` and `Appointment`.
