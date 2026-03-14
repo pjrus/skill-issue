@@ -2,16 +2,17 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useUser } from '@/firebase';
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { databaseService } from '@/services/databaseService';
 import type { User } from '@/types/userTypes';
 import { useToast } from '@/hooks/use-toast';
 import { add, format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ChevronLeft, Calendar as CalendarIcon, Clock } from 'lucide-react';
 
 const timeSlots = [
   '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'
@@ -61,50 +62,108 @@ export default function BookingPage({ params }: { params: Promise<{ matchId: str
     }
   }
 
-  if (!currentUser || !otherUser) return <div className="container py-10"><Loader2 className="mx-auto mt-10 h-8 w-8 animate-spin" /></div>;
+  if (!currentUser || !otherUser) return <div className="container py-20 flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
 
   return (
-    <div className="container py-10 max-w-4xl mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle>Book a session with {otherUser.username}</CardTitle>
-          <CardDescription>Select a date and time that works for both of you.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid md:grid-cols-2 gap-8">
-          <div className="flex flex-col items-center">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              className="rounded-md border"
-              disabled={(d) => d < new Date(new Date().toDateString())}
-            />
+    <div className="min-h-screen bg-background/50">
+      <div className="container py-8 max-w-6xl mx-auto space-y-8">
+        {/* Header Section */}
+        <div className="flex flex-col gap-6">
+          <Link 
+            href="/"
+            className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors w-fit"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Back to Home
+          </Link>
+          
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">Book a session with {otherUser.username}</h1>
+            <p className="text-muted-foreground text-lg">
+              Find a time that works for both of you to swap skills and grow together.
+            </p>
           </div>
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">
-                Available Times for {date ? format(date, 'PPP') : 'selected date'}
-            </h3>
-            <div className="grid grid-cols-3 gap-2">
-                {timeSlots.map(time => (
-                    <Button 
-                        key={time}
-                        variant={selectedTime === time ? "default" : "outline"}
-                        onClick={() => setSelectedTime(time)}
-                        className={cn(selectedTime === time && "bg-primary text-primary-foreground")}
-                    >
-                        {time}
-                    </Button>
-                ))}
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-12 gap-10 items-start">
+          {/* Calendar Column */}
+          <Card className="lg:col-span-5 border-border/40 shadow-sm bg-card/30 backdrop-blur-sm overflow-hidden">
+            <div className="p-6 border-b border-border/40 bg-muted/30">
+              <div className="flex items-center gap-2 font-semibold">
+                <CalendarIcon className="h-4 w-4 text-primary" />
+                Select Date
+              </div>
             </div>
-          </div>
-        </CardContent>
-        <CardContent className="flex justify-center">
-           <Button onClick={handleBooking} disabled={!date || !selectedTime || isLoading} size="lg">
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Confirm Booking for {selectedTime}
-            </Button>
-        </CardContent>
-      </Card>
+            <CardContent className="p-6 flex justify-center">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                showOutsideDays={false}
+                className="p-0 border-0 shadow-none bg-transparent"
+                disabled={(d) => d < new Date(new Date().toDateString())}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Time Slots Column */}
+          <Card className="lg:col-span-7 border-border/40 shadow-sm bg-card/30 backdrop-blur-sm overflow-hidden min-h-[500px] flex flex-col">
+            <div className="p-6 border-b border-border/40 bg-muted/30 flex justify-between items-center">
+              <div className="flex items-center gap-2 font-semibold">
+                <Clock className="h-4 w-4 text-primary" />
+                Select Time
+              </div>
+              <div className="text-sm font-medium px-3 py-1 bg-primary/10 text-primary rounded-full">
+                {date ? format(date, 'MMMM d, yyyy') : 'Pick a date'}
+              </div>
+            </div>
+            
+            <CardContent className="p-8 flex-1">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {timeSlots.map(time => (
+                  <button
+                    key={time}
+                    onClick={() => setSelectedTime(time)}
+                    className={cn(
+                      "group relative h-14 flex items-center justify-center rounded-xl border-2 transition-all duration-200 text-base font-medium",
+                      selectedTime === time
+                        ? "bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]"
+                        : "border-border/40 hover:border-primary/50 hover:bg-muted/50 text-foreground"
+                    )}
+                  >
+                    {time}
+                    {selectedTime === time && (
+                      <span className="absolute top-1 right-1 w-2 h-2 bg-primary-foreground rounded-full" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+
+            {/* Footer Action */}
+            <div className="p-8 border-t border-border/40 bg-muted/20">
+              <Button 
+                onClick={handleBooking} 
+                disabled={!date || !selectedTime || isLoading} 
+                size="lg"
+                className="w-full h-14 text-lg font-semibold rounded-xl transition-all duration-300 active:scale-[0.98]"
+              >
+                {isLoading ? (
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <>
+                    Confirm Booking {selectedTime && `for ${selectedTime}`}
+                  </>
+                )}
+              </Button>
+              <p className="mt-4 text-center text-xs text-muted-foreground px-4">
+                By confirming, a calendar invite will be sent to both participants.
+              </p>
+            </div>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
