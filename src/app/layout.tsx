@@ -12,7 +12,7 @@ const fontInter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Skill Issue',
+  title: 'Skill-Issue',
   description: 'Exchange skills with peers.',
 };
 

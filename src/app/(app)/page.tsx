@@ -192,13 +192,13 @@ export default function HomePage() {
   return (
     <div className="container py-8 space-y-12">
       
-      {/* Top Section: Discover Connections Card */}
+      {/* Top Section: Find your next Skill Swap Card */}
       <section>
         <Card className="w-full shadow-sm border-muted bg-card">
           <CardHeader className="pb-4">
              <CardTitle className="flex items-center gap-2 text-xl font-semibold">
               <Sparkles className="w-5 h-5" />
-              Discover Connections
+              Find your next Skill Swap
             </CardTitle>
             <CardDescription className="text-sm">What are you looking to achieve today?</CardDescription>
           </CardHeader>
@@ -237,6 +237,17 @@ export default function HomePage() {
              </div>
           </CardContent>
         </Card>
+        
+        <div className="mt-4 flex justify-center">
+          <Button 
+             variant="outline"
+             onClick={() => router.push('/ai-chat')}
+             className="gap-2 text-muted-foreground bg-card shadow-sm hover:text-foreground hover:bg-muted/50"
+          >
+             <Sparkles className="w-4 h-4 text-primary" />
+             Chat with Skilliton to find your next Skill Swapper
+          </Button>
+        </div>
       </section>
 
       <section>

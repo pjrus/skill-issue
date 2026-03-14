@@ -55,7 +55,7 @@ export const authService = {
       username: username,
       email: firebaseUser.email!,
       avatarUrl: firebaseUser.photoURL || `https://picsum.photos/seed/${firebaseUser.uid}/200/200`,
-      bio: 'Just joined Skill Issue!',
+      bio: 'Just joined Skill-Issue!',
       skillsOffered: [],
       skillsWanted: [],
       learningStyle: [],

@@ -37,7 +37,7 @@ function Header() {
         <div className="flex gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
             <Icons.logo className="h-6 w-6 text-primary" />
-            <span className="inline-block font-bold">Skill Issue</span>
+            <span className="inline-block font-bold">Skill-Issue</span>
           </Link>
           <nav className="hidden md:flex gap-6">
             <Link
@@ -50,7 +50,7 @@ function Header() {
               href="/skills"
               className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
             >
-              My Skills
+              Skills
             </Link>
             <Link
               href="/bookings"
@@ -62,7 +62,7 @@ function Header() {
               href="/ai-chat"
               className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
             >
-              AI Chat
+              Skilliton Chat
             </Link>
           </nav>
         </div>
@@ -99,7 +99,7 @@ function Header() {
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={()=> router.push('/skills')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
-                    <span>My Skills</span>
+                    <span>Skills</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={()=> router.push('/bookings')}>
                     <Users className="mr-2 h-4 w-4" />
@@ -107,7 +107,7 @@ function Header() {
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={()=> router.push('/ai-chat')}>
                     <Wand2 className="mr-2 h-4 w-4" />
-                    <span>AI Chat</span>
+                    <span>Skilliton Chat</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={()=> router.push('/settings')}>
                     <Settings className="mr-2 h-4 w-4" />

@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Loader2, Send, Wand2, ArrowLeft } from 'lucide-react';
 import { aiService } from '@/services/aiService';
 import { databaseService } from '@/services/databaseService';
@@ -69,7 +70,7 @@ export default function AiChatPage() {
         initialMessage += `\nLooking for something new? Just let me know.`;
       }
       
-      setMessages([{ role: 'model', content: initialMessage }]);
+      setMessages([{ role: 'model', content: initialMessage + "\n\nSKIIIIIIILZZZZZZZZZZ" }]);
     }
   }, [messages.length, isChatting, user]);
 
@@ -92,7 +93,10 @@ export default function AiChatPage() {
 
     try {
       const gptParams: AIChatInput = {
-        history: currentHistory.map(m => ({ role: m.role, content: [{ text: m.content }] })),
+        history: currentHistory.map(m => ({ 
+          role: m.role, 
+          content: [{ text: m.content.replace("\n\nSKIIIIIIILZZZZZZZZZZ", "") }] 
+        })),
         message: newMessage.content,
         model: user?.preferredModel,
         temperature: 0.7,
@@ -107,8 +111,7 @@ export default function AiChatPage() {
       };
 
       const response = await aiService.chat(gptParams);
-      
-      setMessages(prev => [...prev, { role: 'model', content: response.text }]);
+      setMessages(prev => [...prev, { role: 'model', content: response.text + "\n\nSKIIIIIIILZZZZZZZZZZ" }]);
 
       if (response.extractedSkills) {
         setSkills(response.extractedSkills);
@@ -166,23 +169,18 @@ export default function AiChatPage() {
   };
 
   return (
-    <div className="container max-w-4xl py-8 space-y-6">
-      
-      <div className="flex items-center mb-6">
-        <Button variant="ghost" className="mr-4" onClick={() => router.push('/')}>
-            <ArrowLeft className="h-4 w-4 mr-2" /> Back
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">AI Skill Matcher</h1>
-          <p className="text-muted-foreground mt-1">Chat with our AI to find the perfect learning partner.</p>
-        </div>
-      </div>
-
-      <Card className={`flex flex-col w-full shadow-sm border-muted h-[600px] transition-all duration-300`}>
-        <CardHeader className="pb-3 border-b bg-muted/20 flex flex-row items-center justify-between">
+    <div className="container max-w-4xl py-6 flex flex-col h-[calc(100vh-4rem)]">
+      <Card className={`flex flex-col w-full shadow-sm border-muted flex-1 min-h-[0px] transition-all duration-300 mt-4`}>
+        <CardHeader className="pb-3 border-b bg-muted/20 flex flex-row items-center gap-4">
+           <Button variant="ghost" className="shrink-0 -ml-2 text-muted-foreground hover:text-foreground" onClick={() => router.push('/')}>
+               <ArrowLeft className="h-4 w-4 mr-1" /> Back
+           </Button>
+           <div className="h-6 w-[1px] bg-border mr-2" />
            <CardTitle className="flex items-center gap-2 text-lg">
-            <Wand2 className="text-primary w-5 h-5" />
-            Skill Discovery Assistant
+             <Avatar className="h-6 w-6">
+                <AvatarImage src="/skilliton.png" />
+             </Avatar>
+             Skilliton
           </CardTitle>
         </CardHeader>
         
@@ -194,23 +192,37 @@ export default function AiChatPage() {
               {messages.map((msg, idx) => (
                 <div 
                   key={idx} 
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start md:pr-12'}`}
                 >
-                  <div 
-                    className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
-                      msg.role === 'user' 
-                        ? 'bg-primary text-primary-foreground rounded-br-sm' 
-                        : 'bg-muted rounded-bl-sm'
-                    }`}
-                  >
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
+                  <div className={`flex gap-3 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                    {msg.role === 'model' && (
+                      <Avatar className="h-8 w-8 shrink-0 border mt-0.5 bg-background shadow-sm">
+                        <AvatarImage src="/skilliton.png" alt="Skilliton" />
+                        <AvatarFallback>SK</AvatarFallback>
+                      </Avatar>
+                    )}
+                    <div 
+                      className={`px-4 py-2.5 rounded-2xl ${
+                        msg.role === 'user' 
+                          ? 'bg-primary text-primary-foreground rounded-br-sm' 
+                          : 'bg-muted rounded-bl-sm border shadow-sm text-foreground'
+                      }`}
+                    >
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
+                    </div>
                   </div>
                 </div>
               ))}
               {isChatting && (
                 <div className="flex justify-start">
-                  <div className="bg-muted rounded-2xl rounded-bl-sm px-4 py-2.5">
-                     <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  <div className="flex gap-3 max-w-[85%]">
+                    <Avatar className="h-8 w-8 shrink-0 border mt-0.5 bg-background shadow-sm">
+                      <AvatarImage src="/skilliton.png" alt="Skilliton" />
+                      <AvatarFallback>SK</AvatarFallback>
+                    </Avatar>
+                    <div className="bg-muted border shadow-sm rounded-2xl rounded-bl-sm px-4 py-2.5">
+                       <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                    </div>
                   </div>
                 </div>
               )}
