@@ -100,7 +100,7 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex h-screen flex-col items-center justify-center">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px] animate-in fade-in slide-in-from-bottom-8 duration-700">
             <div className="flex flex-col space-y-2 text-center">
                 <Icons.logo className="mx-auto h-8 w-8 text-primary"/>
                 <h1 className="text-2xl font-semibold tracking-tight">
@@ -132,7 +132,7 @@ export default function LoginPage() {
                                 <Label htmlFor="password-signin">Password</Label>
                                 <Input id="password-signin" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required />
                             </div>
-                            <Button onClick={handleEmailLogin} disabled={isProcessing} className="w-full">
+                            <Button onClick={handleEmailLogin} disabled={isProcessing} className="w-full transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-primary/20">
                                 {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 Sign In
                             </Button>
@@ -155,7 +155,7 @@ export default function LoginPage() {
                                 <Label htmlFor="password-signup">Password</Label>
                                 <Input id="password-signup" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" required />
                             </div>
-                            <Button onClick={handleEmailSignUp} disabled={isProcessing} className="w-full">
+                            <Button onClick={handleEmailSignUp} disabled={isProcessing} className="w-full transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-primary/20">
                                 {isProcessing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 Create Account
                             </Button>
@@ -175,7 +175,7 @@ export default function LoginPage() {
                 </div>
             </div>
 
-            <Button variant="outline" onClick={handleGoogleLogin} disabled={isProcessing}>
+            <Button variant="outline" onClick={handleGoogleLogin} disabled={isProcessing} className="transition-all hover:-translate-y-0.5 hover:shadow-sm">
                 {isProcessing ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
