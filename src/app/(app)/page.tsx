@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { Loader2, ArrowRight, Users, Sparkles } from 'lucide-react';
+import { Loader2, ArrowRight, Users, Sparkles, Book, Search } from 'lucide-react';
 import { databaseService } from '@/services/databaseService';
 import { useToast } from '@/hooks/use-toast';
 import type { User } from '@/types/userTypes';
@@ -197,10 +197,10 @@ export default function HomePage() {
         <Card className="w-full shadow-sm border-muted bg-card">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl font-semibold">
-              <Sparkles className="w-5 h-5" />
+              <Book className="w-5 h-5" />
               Have a Skill Issue?
             </CardTitle>
-            <CardDescription className="text-sm">Look no further, Skilliton is here! Just fill in the following fields, or Chat with Skilliton via the button below.</CardDescription>
+            <CardDescription className="text-sm">Look no further, Skilliton is here! Just fill in the following fields, or Chat with Skilliton.</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -228,10 +228,14 @@ export default function HomePage() {
               <Button
                 onClick={handleSearch}
                 disabled={isSaving}
-                className="px-8"
+                className="px-8 flex items-center gap-2"
                 variant="secondary"
               >
-                {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {isSaving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Search className="w-4 h-4" />
+                )}
                 Search
               </Button>
             </div>
@@ -253,7 +257,7 @@ export default function HomePage() {
       <section>
         <div className="mb-6 flex items-baseline justify-between">
           <h2 className="text-2xl font-bold tracking-tight">
-            {viewAll ? "All Users" : "Have a Skill Issue?"}
+            {viewAll ? "All Users" : "Recommended Users"}
           </h2>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground hidden sm:inline-block">
