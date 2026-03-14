@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from 'next/link';
 import { Icons } from '@/components/icons';
-import { LayoutDashboard, LifeBuoy, LogOut, Settings, Users, Loader2, Bell } from 'lucide-react';
+import { LayoutDashboard, LifeBuoy, LogOut, Settings, Users, Loader2, Bell, Calendar } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 
 function Header() {
@@ -51,6 +51,12 @@ function Header() {
               className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
             >
               My Skills
+            </Link>
+            <Link
+              href="/bookings"
+              className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              Bookings
             </Link>
           </nav>
         </div>
@@ -106,6 +112,10 @@ function Header() {
                   <DropdownMenuItem onSelect={()=> router.push('/my-skills')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     <span>My Skills</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={()=> router.push('/bookings')}>
+                    <Calendar className="mr-2 h-4 w-4" />
+                    <span>Bookings</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={()=> router.push('/settings')}>
                     <Settings className="mr-2 h-4 w-4" />

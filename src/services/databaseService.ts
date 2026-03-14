@@ -1,7 +1,7 @@
 'use client';
 
 import { db } from '@/firebase/config';
-import { collection, doc, getDoc, getDocs, updateDoc, addDoc, Timestamp } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, updateDoc, addDoc, Timestamp, query, where } from 'firebase/firestore';
 import type { User } from '@/types/userTypes';
 import type { Appointment } from '@/types/matchTypes';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -114,5 +114,56 @@ export const databaseService = {
         status: apptData.status,
         users: [users[0], users[1]]
     };
+  },
+
+  getUserAppointments: async (userId: string): Promise<Appointment[]> => {
+    const appointmentsRef = collection(db, 'appointments');
+    const q = query(appointmentsRef, where("userIds", "array-contains", userId));
+    const querySnapshot = await getDocs(q);
+
+    // Fetch all unique users involved in these appointments
+    const allUserIds = new Set<string>();
+    querySnapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        (data.userIds || []).forEach((id: string) => allUserIds.add(id));
+    });
+
+    // Resolve all users 
+    const usersMap = new Map<string, User>();
+    const userPromises = Array.from(allUserIds).map(async (id) => {
+        const user = await databaseService.getUser(id);
+        if (user) {
+            usersMap.set(id, user);
+        }
+    });
+    
+    await Promise.all(userPromises);
+
+    const appointments: Appointment[] = [];
+    
+    querySnapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const apptUserIds = data.userIds as string[];
+        if (apptUserIds && apptUserIds.length === 2) {
+            const user1 = usersMap.get(apptUserIds[0]);
+            const user2 = usersMap.get(apptUserIds[1]);
+            
+            if (user1 && user2) {
+                appointments.push({
+                    id: docSnap.id,
+                    matchId: data.matchId,
+                    date: (data.date as Timestamp).toDate(),
+                    meetLink: data.meetLink,
+                    status: data.status,
+                    users: [user1, user2],
+                });
+            }
+        }
+    });
+
+    // Sort by date nearest first
+    appointments.sort((a, b) => a.date.getTime() - b.date.getTime());
+    
+    return appointments;
   },
 };
