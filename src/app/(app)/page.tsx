@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import { matchingService } from '@/services/matchingService';
 import type { Match } from '@/types/matchTypes';
+import { getSampleDescription } from "@/lib/userUtils";
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -105,21 +106,6 @@ function UserReviewSnippet({ userId }: { userId: string }) {
   );
 }
 
-const FALLBACK_DESCRIPTIONS = [
-  "I'm passionate about sharing my skills and learning from others!",
-  "Always looking for new challenges and collaborative learning opportunities.",
-  "Skill swapping is the future! Happy to teach what I know.",
-  "Eager to broaden my horizons and contribute to the community.",
-  "Knowledge is better when shared. Let's swap skills!",
-  "I love the idea of mutual growth through skill exchange."
-];
-
-function getSampleDescription(userId: string) {
-  // Use userId to consistently pick a description for the same user
-  const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return FALLBACK_DESCRIPTIONS[hash % FALLBACK_DESCRIPTIONS.length];
-}
-
 function MatchCard({ match }: { match: Match }) {
   const router = useRouter();
   const { user: currentUser } = useUser();
@@ -169,9 +155,19 @@ function MatchCard({ match }: { match: Match }) {
           <UserReviewSnippet userId={otherUser.id} />
         </CardContent>
       </Link>
-      <CardFooter className="pt-0">
-        <Button className="w-full" onClick={() => router.push(`/booking/${match.id}`)}>
-          Connect
+      <CardFooter className="pt-0 gap-2 flex-col sm:flex-row">
+        <Button 
+          variant="outline" 
+          className="w-full" 
+          onClick={() => router.push(`/user/${otherUser.id}`)}
+        >
+          View Profile
+        </Button>
+        <Button 
+          className="w-full" 
+          onClick={() => router.push(`/booking/${match.id}`)}
+        >
+          Book Swap
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </CardFooter>
@@ -448,7 +444,7 @@ export default function HomePage() {
                   </CardContent>
                 </Link>
                 <CardFooter className="pt-0">
-                  <Button className="w-full" variant="outline" onClick={() => router.push(`/booking/${u.id}`)}>
+                  <Button className="w-full" variant="outline" onClick={() => router.push(`/user/${u.id}`)}>
                     View Profile
                   </Button>
                 </CardFooter>

@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Star, ArrowLeft, Calendar, MessageSquare, GraduationCap, BookOpen, Sparkles } from "lucide-react";
 import { format } from "date-fns";
+import { getSampleDescription } from "@/lib/userUtils";
 
 export default function UserProfilePage() {
   const { userId } = useParams() as { userId: string };
@@ -76,7 +77,7 @@ export default function UserProfilePage() {
     : null;
 
   return (
-    <div className="container py-10 space-y-8 max-w-6xl">
+    <div className="container py-10 space-y-8">
       <Button 
         variant="ghost" 
         onClick={() => router.back()} 
@@ -159,9 +160,25 @@ export default function UserProfilePage() {
           </Card>
         </div>
 
-        {/* Right Column: Reviews & Activity */}
+        {/* Right Column: About & Reviews */}
         <div className="md:col-span-2 space-y-6">
-          <Card className="border-none shadow-sm h-full">
+          {/* Profile Description Card */}
+          <Card className="border-none shadow-sm overflow-hidden">
+            <CardHeader className="bg-primary/5 pb-4">
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                About {profileUser.username}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <p className="text-lg leading-relaxed italic text-foreground/90">
+                "{profileUser.profileDescription || getSampleDescription(profileUser.id)}"
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Reviews Card */}
+          <Card className="border-none shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between border-b pb-6">
               <div className="space-y-1">
                 <CardTitle className="text-2xl flex items-center gap-2">

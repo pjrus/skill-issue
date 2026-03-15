@@ -112,7 +112,7 @@ export default function BookingPage({ params }: { params: Promise<{ matchId: str
 
   return (
     <div className="min-h-screen bg-background/50">
-      <div className="container py-8 max-w-6xl mx-auto space-y-8">
+      <div className="container py-8 mx-auto space-y-8">
         {/* Header Section */}
         <div className="flex flex-col gap-6">
           <Link 
