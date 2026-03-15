@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { allLearningStyles, type LearningStyle } from '@/types/userTypes';
 import { useToast } from '@/hooks/use-toast';
 import { databaseService } from '@/services/databaseService';
+import { matchingService } from '@/services/matchingService';
 import { useState, useEffect, useRef } from 'react';
 import { Loader2, X, Eye, EyeOff, Camera, User as UserIcon, Star } from 'lucide-react';
 import { storage } from '@/firebase/config';
@@ -186,6 +187,7 @@ export default function SettingsPage() {
             const updatedUser = await databaseService.updateUser(user.id, updatedData);
             if(updatedUser) {
                 updateUserContext(updatedUser);
+                await matchingService.refreshMatches(user.id);
                 toast({ title: 'Success', description: 'Your profile has been updated.' });
             } else {
                 throw new Error("User not found after update");

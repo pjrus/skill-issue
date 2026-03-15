@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, Send, Wand2, ArrowLeft } from 'lucide-react';
+import { Loader2, Send, Wand2, ArrowLeft, Maximize2, Minimize2 } from 'lucide-react';
 import { aiService } from '@/services/aiService';
 import { databaseService } from '@/services/databaseService';
 import { useToast } from '@/hooks/use-toast';
@@ -37,6 +37,7 @@ export default function AiChatPage() {
   const [skills, setSkills] = useState<{ offered: string[]; wanted: string[] } | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const [allUsers, setAllUsers] = useState<User[]>([]);
 
   // Fetch match data
@@ -153,6 +154,7 @@ export default function AiChatPage() {
         updateUserContext(updatedUser);
       }
       setSkills(null);
+      await matchingService.refreshMatches(user.id);
       toast({ title: 'Profile Updated', description: 'Taking you back home to see your matches...' });
       
       // Navigate to home to see matches
@@ -170,7 +172,7 @@ export default function AiChatPage() {
   };
 
   return (
-    <div className="container max-w-4xl py-6 flex flex-col h-[calc(100vh-4rem)]">
+    <div className={`container py-6 flex flex-col h-[calc(100vh-4rem)] transition-all duration-300 ${isFullScreen ? 'max-w-none px-4' : 'max-w-7xl'}`}>
       <Card className={`flex flex-col w-full shadow-sm border-muted flex-1 min-h-[0px] transition-all duration-300 mt-4`}>
         <CardHeader className="pb-3 border-b bg-muted/20 flex flex-row items-center gap-4">
            <Button variant="ghost" className="shrink-0 -ml-2 text-muted-foreground hover:text-foreground" onClick={() => router.push('/')}>
@@ -183,6 +185,15 @@ export default function AiChatPage() {
              </Avatar>
              Skilliton
           </CardTitle>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="ml-auto text-muted-foreground hover:text-foreground" 
+            onClick={() => setIsFullScreen(!isFullScreen)}
+            title={isFullScreen ? "Exit Full Screen" : "Full Screen"}
+          >
+            {isFullScreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+          </Button>
         </CardHeader>
         
         <CardContent className="flex-1 overflow-hidden flex flex-col p-4">

@@ -80,4 +80,7 @@ export const matchingService = {
       return enrichedMatches;
     }, CACHE_TTL.MATCHES);
   },
+  refreshMatches: async (currentUserId: string): Promise<void> => {
+    cache.invalidate(`matches_${currentUserId}`);
+  },
 };

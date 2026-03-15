@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Plus, X, Save } from 'lucide-react';
 import { databaseService } from '@/services/databaseService';
+import { matchingService } from '@/services/matchingService';
 import { useToast } from '@/hooks/use-toast';
 
 export default function SkillsPage() {
@@ -65,6 +66,7 @@ export default function SkillsPage() {
       });
       if (updatedUser) {
         updateUserContext(updatedUser);
+        await matchingService.refreshMatches(user.id);
       }
       toast({
         title: 'Profile Saved',

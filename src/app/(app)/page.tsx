@@ -235,6 +235,7 @@ export default function HomePage() {
       setSearchTermOffered('');
 
       toast({ title: 'Skills Updated', description: 'Refreshing your matches...' });
+      await matchingService.refreshMatches(user.id);
       await loadMatches();
     } catch (error) {
       console.error(error);
@@ -249,12 +250,13 @@ export default function HomePage() {
   };
 
   return (
-    <div className="container py-8 space-y-12">
+    <div className="container pt-12 pb-8 space-y-12">
 
       {/* Top Section: Find your next Skill Swap Card */}
       <section>
+ 
         <Card className="w-full shadow-sm border-muted bg-card">
-          <CardHeader className="pb-4">
+          <CardHeader className="pt-8 pb-4">
             <CardTitle className="flex items-center gap-2 text-xl font-semibold">
               <Book className="w-5 h-5" />
               Have a Skill Issue?
@@ -301,16 +303,17 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
-        <div className="mt-4 flex justify-center">
+       <div className="mb-4">
           <Button
             variant="outline"
             onClick={() => router.push('/ai-chat')}
-            className="gap-2 text-muted-foreground bg-card shadow-sm hover:text-foreground hover:bg-muted/50"
+            className="w-full gap-2 text-muted-foreground dark:text-white bg-card shadow-sm hover:text-foreground hover:bg-muted/50"
           >
             <Sparkles className="w-4 h-4 text-primary" />
             Chat with Skilliton to fix your Skill Issue
           </Button>
         </div>
+
       </section>
 
       <section>
