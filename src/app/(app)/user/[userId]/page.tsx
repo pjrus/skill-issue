@@ -171,8 +171,8 @@ export default function UserProfilePage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
-              <p className="text-lg leading-relaxed italic text-foreground/90">
-                "{profileUser.profileDescription || getSampleDescription(profileUser.id)}"
+              <p className="text-md leading-relaxed text-foreground/90">
+                {profileUser.profileDescription || getSampleDescription(profileUser.id)}
               </p>
             </CardContent>
           </Card>

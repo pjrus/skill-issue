@@ -125,21 +125,23 @@ export function MatchCard({ match }: { match: Match }) {
           </div>
         </CardHeader>
         <CardContent className="flex-grow space-y-4 pt-4">
-          <p className="text-sm text-muted-foreground italic">
-            "{otherUser.profileDescription || getSampleDescription(otherUser.id)}"
-          </p>
-
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold text-primary/80 uppercase tracking-wider text-[10px]">About</h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {otherUser.profileDescription || getSampleDescription(otherUser.id)}
+            </p>
+          </div>
 
           <div className="space-y-2">
-            <h4 className="text-sm font-semibold">You will learn:</h4>
+            <h4 className="text-sm font-semibold text-primary/80 uppercase tracking-wider text-[10px]">You will learn:</h4>
             <div className="flex flex-wrap gap-2">
-              {skillsYouGet.map(skill => <Badge key={skill} variant="secondary">{skill}</Badge>)}
+              {skillsYouGet.map(skill => <Badge key={skill} variant="secondary" className="font-medium">{skill}</Badge>)}
             </div>
           </div>
           <div className="space-y-2">
-            <h4 className="text-sm font-semibold">You will teach:</h4>
+            <h4 className="text-sm font-semibold text-primary/80 uppercase tracking-wider text-[10px]">You will teach:</h4>
             <div className="flex flex-wrap gap-2">
-              {skillsYouGive.map(skill => <Badge key={skill}>{skill}</Badge>)}
+              {skillsYouGive.map(skill => <Badge key={skill} className="font-medium">{skill}</Badge>)}
             </div>
           </div>
 
