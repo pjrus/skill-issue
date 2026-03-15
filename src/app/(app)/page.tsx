@@ -250,7 +250,28 @@ export default function HomePage() {
   };
 
   return (
-    <div className="container pt-12 pb-8 space-y-12">
+    <div className="container pt-10 pb-8 space-y-10">
+      {/* Hero greeting */}
+      <section className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <Avatar className="h-16 w-16 border-2 border-primary/20 shadow-md">
+              <AvatarImage src={user?.avatarUrl} alt={user?.username} />
+              <AvatarFallback className="text-xl font-bold bg-primary/10 text-primary">
+                {user?.username?.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            {/* Online indicator */}
+            <span className="absolute bottom-0.5 right-0.5 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-background" />
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">
+              {new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening'},
+            </p>
+            <h1 className="text-2xl font-bold tracking-tight">{user?.fullName || user?.username}</h1>
+          </div>
+        </div>
+      </section>
 
       {/* Top Section: Find your next Skill Swap Card */}
       <section>
