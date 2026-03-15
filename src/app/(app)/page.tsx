@@ -303,11 +303,11 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
-       <div className="mb-4">
+       <div className="mb-4 mt-6">
           <Button
             variant="outline"
             onClick={() => router.push('/ai-chat')}
-            className="w-full gap-2 text-muted-foreground dark:text-white bg-card shadow-sm hover:text-foreground hover:bg-muted/50"
+            className="w-full gap-2 text-muted-foreground dark:text-white bg-card shadow-sm hover:text-foreground hover:bg-muted/50 py-6"
           >
             <Sparkles className="w-4 h-4 text-primary" />
             Chat with Skilliton to fix your Skill Issue

@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { databaseService } from '@/services/databaseService';
 import type { User } from '@/types/userTypes';
 import { useToast } from '@/hooks/use-toast';
-import { add, format } from 'date-fns';
+import { add, format, set, startOfDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Loader2, ChevronLeft, Calendar as CalendarIcon, Clock, BookOpen, GraduationCap } from 'lucide-react';
 
@@ -24,7 +24,7 @@ export default function BookingPage({ params }: { params: Promise<{ matchId: str
   const { user: currentUser } = useUser();
   const { toast } = useToast();
   const [otherUser, setOtherUser] = useState<User | null>(null);
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(startOfDay(new Date()));
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -63,7 +63,12 @@ export default function BookingPage({ params }: { params: Promise<{ matchId: str
     setIsLoading(true);
 
     const [hours, minutes] = selectedTime.split(':').map(Number);
-    const appointmentDateTime = add(date, { hours, minutes });
+    const appointmentDateTime = set(date, { 
+      hours, 
+      minutes, 
+      seconds: 0, 
+      milliseconds: 0 
+    });
 
     try {
         // Attempt to get a real Google Meet link from our API
