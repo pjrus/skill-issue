@@ -19,6 +19,8 @@ Represents a user's profile in the application.
   - `email` (string): The user's email address (must be a valid email format).
   - `avatarUrl` (string): A URL to the user's profile picture (stored in Firebase Storage).
   - `bio` (string): A short user biography.
+  - `profileDescription` (string): A detailed description of what the user can offer and what they are looking for.
+
   - `skillsOffered` (list of strings): Skills the user can teach.
   - `skillsWanted` (list of strings): Skills the user wants to learn.
   - `learningStyle` (list of strings): The user's preferred learning methods.

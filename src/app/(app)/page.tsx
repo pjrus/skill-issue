@@ -105,6 +105,21 @@ function UserReviewSnippet({ userId }: { userId: string }) {
   );
 }
 
+const FALLBACK_DESCRIPTIONS = [
+  "I'm passionate about sharing my skills and learning from others!",
+  "Always looking for new challenges and collaborative learning opportunities.",
+  "Skill swapping is the future! Happy to teach what I know.",
+  "Eager to broaden my horizons and contribute to the community.",
+  "Knowledge is better when shared. Let's swap skills!",
+  "I love the idea of mutual growth through skill exchange."
+];
+
+function getSampleDescription(userId: string) {
+  // Use userId to consistently pick a description for the same user
+  const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return FALLBACK_DESCRIPTIONS[hash % FALLBACK_DESCRIPTIONS.length];
+}
+
 function MatchCard({ match }: { match: Match }) {
   const router = useRouter();
   const { user: currentUser } = useUser();
@@ -133,7 +148,10 @@ function MatchCard({ match }: { match: Match }) {
           </div>
         </CardHeader>
         <CardContent className="flex-grow space-y-4 pt-4">
-          <p className="text-sm text-muted-foreground italic">"{match.aiSummary}"</p>
+          <p className="text-sm text-muted-foreground italic">
+            "{otherUser.profileDescription || getSampleDescription(otherUser.id)}"
+          </p>
+
 
           <div className="space-y-2">
             <h4 className="text-sm font-semibold">You will learn:</h4>
@@ -401,6 +419,10 @@ export default function HomePage() {
                     </div>
                   </CardHeader>
                   <CardContent className="flex-grow space-y-4 pt-4">
+                    <p className="text-sm text-muted-foreground italic">
+                      "{u.profileDescription || getSampleDescription(u.id)}"
+                    </p>
+
                     <div className="space-y-2">
                       <h4 className="text-sm font-semibold">Offers:</h4>
                       <div className="flex flex-wrap gap-2">

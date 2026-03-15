@@ -23,6 +23,8 @@ export type User = {
   password?: string; // Should not be sent to client
   avatarUrl: string;
   bio: string;
+  profileDescription: string;
+
   skillsOffered: string[];
   skillsWanted: string[];
   learningStyle: LearningStyle[];

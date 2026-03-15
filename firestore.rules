@@ -22,6 +22,7 @@ service cloud.firestore {
         && data.learningStyle is list
         // Optional fields: if they exist, they must be the correct type
         && (!('bio' in data) || data.bio is string)
+        && (!('profileDescription' in data) || data.profileDescription is string)
         && (!('availability' in data) || data.availability is string)
         && (!('preferredModel' in data) || data.preferredModel is string);
     }
@@ -55,7 +56,7 @@ service cloud.firestore {
       // This allows the seed script to run, while still enforcing ownership for regular creation.
       allow create: if (isAuth() || isOwner(userId))
                       && isValidUser(request.resource.data)
-                      && request.resource.data.keys().hasOnly(['username', 'fullName', 'email', 'avatarUrl', 'bio', 'skillsOffered', 'skillsWanted', 'learningStyle', 'availability', 'preferredModel']);
+                      && request.resource.data.keys().hasOnly(['username', 'fullName', 'email', 'avatarUrl', 'bio', 'profileDescription', 'skillsOffered', 'skillsWanted', 'learningStyle', 'availability', 'preferredModel']);
 
       // READ: Any authenticated user can read profiles for matching.
       allow get, list: if isAuth();
@@ -65,7 +66,7 @@ service cloud.firestore {
       allow update: if isOwner(userId) 
                       && request.resource.data.email == resource.data.email
                       && isValidUser(request.resource.data)
-                      && request.resource.data.keys().hasOnly(['username', 'fullName', 'email', 'avatarUrl', 'bio', 'skillsOffered', 'skillsWanted', 'learningStyle', 'availability', 'preferredModel']);
+                      && request.resource.data.keys().hasOnly(['username', 'fullName', 'email', 'avatarUrl', 'bio', 'profileDescription', 'skillsOffered', 'skillsWanted', 'learningStyle', 'availability', 'preferredModel']);
     }
 
     match /appointments/{appointmentId} {

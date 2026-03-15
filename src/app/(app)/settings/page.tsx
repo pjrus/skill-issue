@@ -65,7 +65,9 @@ export default function SettingsPage() {
     const { user, updateUserContext } = useUser();
     const { toast } = useToast();
     const [bio, setBio] = useState('');
+    const [profileDescription, setProfileDescription] = useState('');
     const [fullName, setFullName] = useState('');
+
     const [avatarUrl, setAvatarUrl] = useState('');
     const [skillsOffered, setSkillsOffered] = useState<string[]>([]);
     const [skillsWanted, setSkillsWanted] = useState<string[]>([]);
@@ -100,7 +102,9 @@ export default function SettingsPage() {
     useEffect(() => {
         if (user) {
             setBio(user.bio || '');
+            setProfileDescription(user.profileDescription || '');
             setFullName(user.fullName || '');
+
             setAvatarUrl(user.avatarUrl || '');
             setSkillsOffered(user.skillsOffered || []);
             setSkillsWanted(user.skillsWanted || []);
@@ -177,8 +181,10 @@ export default function SettingsPage() {
 
             const updatedData = {
                 bio,
+                profileDescription,
                 fullName,
                 avatarUrl,
+
                 skillsOffered,
                 skillsWanted,
                 learningStyle: learningStyles,
@@ -244,6 +250,12 @@ export default function SettingsPage() {
                         <Label htmlFor="bio">Your Bio</Label>
                         <Textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell us about yourself..." />
                     </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="profileDescription">Profile Description</Label>
+                        <Textarea id="profileDescription" value={profileDescription} onChange={(e) => setProfileDescription(e.target.value)} placeholder="Describe what you can offer and what you are looking for..." rows={4} />
+                    </div>
+
 
                     <SkillsInput title="Skills You Offer" skills={skillsOffered} setSkills={setSkillsOffered} />
                     <SkillsInput title="Skills You Want to Learn" skills={skillsWanted} setSkills={setSkillsWanted} />
