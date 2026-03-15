@@ -33,6 +33,7 @@ export const reviewService = {
       reviewerId: data.reviewerId,
       revieweeId: data.revieweeId,
       reviewText: data.reviewText,
+      rating: data.rating,
       createdAt: Timestamp.now(),
     };
 

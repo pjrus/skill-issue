@@ -45,6 +45,8 @@ service cloud.firestore {
         && data.reviewerId is string
         && data.revieweeId is string
         && data.reviewText is string
+        && data.rating is int
+        && data.rating >= 1 && data.rating <= 5
         && data.createdAt is timestamp;
     }
 

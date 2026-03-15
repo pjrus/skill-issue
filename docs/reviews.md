@@ -5,7 +5,7 @@ The Skill-Issue Review System allows users to leave peer-to-peer feedback after 
 ## Overview
 
 - **Purpose**: To build trust and provide transparency within the skill-sharing community.
-- **Scope**: Text-only reviews (no star ratings) that are immutable once submitted.
+- **Scope**: Text reviews with a 1-5 star numerical rating.
 - **Participation**: Reviews can only be left for bookings with a `completed` status.
 
 ## Data Model
@@ -15,7 +15,7 @@ The Skill-Issue Review System allows users to leave peer-to-peer feedback after 
 Reviews are stored in a top-level `reviews` collection.
 
 - **Collection Path**: `/reviews/{reviewId}`
-- **Review ID Format**: `${bookingId}_${reviewerId}` (Deterministic ID to prevent duplicate reviews for the same booking by the same user).
+- **Review ID Format**: `${bookingId}_${reviewerId}`
 
 ### Schema (TypeScript: `Review` in `reviewTypes.ts`)
 
@@ -26,6 +26,7 @@ export interface Review {
   reviewerId: string;   // UID of the sender
   revieweeId: string;   // UID of the recipient
   reviewText: string;   // The feedback content
+  rating: number;       // 1-5 numerical rating
   createdAt: Date;      // Submission timestamp
 }
 ```
@@ -60,8 +61,25 @@ The system follows a strict security policy:
 
 ### 3. `SettingsPage` (`src/app/(app)/settings/page.tsx`)
 - Added a "Reviews Received" section.
-- Lists all reviews received by the logged-in user with timestamps.
+- Lists all reviews received by the logged-in user with timestamps and star ratings.
+
+### 4. `UserProfilePage` (`src/app/(app)/user/[userId]/page.tsx`)
+- New public/private profile view for any user.
+- Displays calculated average rating.
+- Lists all reviews received by that specific user.
+
+## Indexing Requirements
+
+Firestore requires a composite index to efficiently fetch and order reviews by user. 
+
+If you encounter an "Index Required" error in the console or logs, ensure the following index is created:
+
+- **Collection**: `reviews`
+- **Fields**: 
+    - `revieweeId`: `ASCENDING`
+    - `createdAt`: `DESCENDING`
+
+You can create this manually in the [Firebase Console](https://console.firebase.google.com/project/_/firestore/indexes).
 
 ## Implementation Details
-
-The system uses **shadcn/ui** for the component layer (`Dialog`, `Button`, `Textarea`) and **Tailwind CSS** for styling. Review fetching is primarily client-side using Firebase SDK in `useEffect` hooks.
+...

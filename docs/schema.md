@@ -49,6 +49,7 @@ Represents a text review left by one participant for another after a booking.
   - `reviewerId` (string): UID of the user leaving the review.
   - `revieweeId` (string): UID of the user being reviewed.
   - `reviewText` (string): The content of the review.
+  - `rating` (number): The rating given by the reviewer (1-5).
   - `createdAt` (timestamp): When the review was submitted.
 
 ## Firestore Security Rules

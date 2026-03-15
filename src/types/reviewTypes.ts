@@ -4,6 +4,7 @@ export interface Review {
   reviewerId: string;
   revieweeId: string;
   reviewText: string;
+  rating: number; // 1-5
   createdAt: Date;
 }
 
@@ -12,4 +13,5 @@ export interface CreateReviewData {
   reviewerId: string;
   revieweeId: string;
   reviewText: string;
+  rating: number; // 1-5
 }

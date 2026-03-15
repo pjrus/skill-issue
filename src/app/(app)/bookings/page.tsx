@@ -201,6 +201,24 @@ export default function BookingsPage() {
                     Download to Calendar file (.ics)
                   </Button>
 
+                  {appt.status !== 'completed' && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="gap-2 border-green-200 hover:bg-green-50 hover:text-green-700"
+                      onClick={async () => {
+                        try {
+                          await databaseService.updateAppointment(appt.id, { status: 'completed' });
+                          setAppointments(prev => prev.map(a => a.id === appt.id ? { ...a, status: 'completed' } : a));
+                        } catch (err) {
+                          console.error("Failed to complete appointment:", err);
+                        }
+                      }}
+                    >
+                      Mark as Completed
+                    </Button>
+                  )}
+
                   {appt.status === 'completed' && !hasBeenReviewed && (
                     <Button
                       size="sm"

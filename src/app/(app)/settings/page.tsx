@@ -11,7 +11,7 @@ import { allLearningStyles, type LearningStyle } from '@/types/userTypes';
 import { useToast } from '@/hooks/use-toast';
 import { databaseService } from '@/services/databaseService';
 import { useState, useEffect, useRef } from 'react';
-import { Loader2, X, Eye, EyeOff, Camera, User as UserIcon } from 'lucide-react';
+import { Loader2, X, Eye, EyeOff, Camera, User as UserIcon, Star } from 'lucide-react';
 import { storage } from '@/firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -343,8 +343,22 @@ export default function SettingsPage() {
                     ) : (
                         <div className="space-y-4">
                             {reviews.map((review) => (
-                                <div key={review.id} className="p-4 rounded-lg border bg-muted/30 space-y-2">
-                                    <p className="text-sm font-medium italic">"{review.reviewText}"</p>
+                                <div key={review.id} className="p-4 rounded-lg border bg-muted/30 space-y-3">
+                                    <div className="flex justify-between items-start">
+                                        <p className="text-sm font-medium italic">"{review.reviewText}"</p>
+                                        <div className="flex items-center gap-0.5 shrink-0">
+                                            {[1, 2, 3, 4, 5].map((s) => (
+                                                <Star 
+                                                    key={s} 
+                                                    className={`h-3 w-3 ${
+                                                        s <= review.rating 
+                                                            ? "fill-yellow-400 text-yellow-400" 
+                                                            : "text-muted-foreground/20"
+                                                    }`} 
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
                                     <p className="text-xs text-muted-foreground text-right">
                                         Received on {review.createdAt.toLocaleDateString()}
                                     </p>
