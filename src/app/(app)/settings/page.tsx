@@ -17,6 +17,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { reviewService } from '@/services/reviewService';
 import type { Review } from '@/types/reviewTypes';
+import { cache, CACHE_TTL } from '@/lib/cache';
 
 function SkillsInput({ title, skills, setSkills }: { title: string; skills: string[]; setSkills: (skills: string[]) => void; }) {
     const [currentSkill, setCurrentSkill] = useState('');
@@ -81,13 +82,13 @@ export default function SettingsPage() {
     useEffect(() => {
         const fetchModels = async () => {
             try {
-                const res = await fetch('/api/models');
-                if (res.ok) {
+                const models = await cache.swr('gemini_models', async () => {
+                    const res = await fetch('/api/models');
+                    if (!res.ok) throw new Error("Failed to fetch models");
                     const data = await res.json();
-                    if (data.models) {
-                        setAvailableModels(data.models);
-                    }
-                }
+                    return data.models || [];
+                }, CACHE_TTL.MODELS);
+                setAvailableModels(models);
             } catch (error) {
                 console.error("Failed to fetch models", error);
             }

@@ -7,6 +7,7 @@ import { Appointment } from '@/types/matchTypes';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { generateICS } from '@/utils/calendarUtils';
+import { cache, CACHE_TTL } from '@/lib/cache';
 
 // Helper to convert Firestore Timestamps to Dates in appointment objects
 const appointmentFromDoc = (docSnap: any): Appointment => {
@@ -21,37 +22,48 @@ const appointmentFromDoc = (docSnap: any): Appointment => {
 
 export const databaseService = {
   getUsers: async (): Promise<User[]> => {
-    const usersCollection = collection(db, 'users');
-    const userSnapshot = await getDocs(usersCollection);
-    const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
-    return userList;
+    return cache.swr('all_users', async () => {
+      const usersCollection = collection(db, 'users');
+      const userSnapshot = await getDocs(usersCollection);
+      return userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+    }, CACHE_TTL.USER_PROFILE);
   },
 
   getUser: async (id: string): Promise<User | null> => {
-    const userRef = doc(db, 'users', id);
-    const userSnap = await getDoc(userRef);
-    if (!userSnap.exists()) {
-        return null;
-    }
-    return { id: userSnap.id, ...userSnap.data() } as User;
+    return cache.swr(`user_${id}`, async () => {
+      const userRef = doc(db, 'users', id);
+      const userSnap = await getDoc(userRef);
+      if (!userSnap.exists()) {
+          return null;
+      }
+      return { id: userSnap.id, ...userSnap.data() } as User;
+    }, CACHE_TTL.USER_PROFILE);
   },
 
   updateUser: async (id: string, data: Partial<User>): Promise<User | null> => {
     const userRef = doc(db, 'users', id);
     await updateDoc(userRef, data)
       .catch(serverError => {
+        // Emit a specific permission error to the global emitter for UI notification components
         const permissionError = new FirestorePermissionError({
             path: userRef.path,
             operation: 'update',
             requestResourceData: data,
         });
         errorEmitter.emit('permission-error', permissionError);
-        throw serverError; // Re-throw to allow UI to handle loading/error states
+        throw serverError; // Re-throw to allow component-level catch blocks to handle local state
       });
 
-    // Return updated user data on success
-    const currentUser = await databaseService.getUser(id);
-    return currentUser ? { ...currentUser, ...data } : null;
+    // Update cache with updated user data on success
+    const updatedUser = await databaseService.getUser(id);
+    if (updatedUser) {
+        const mergedUser = { ...updatedUser, ...data };
+        cache.set(`user_${id}`, mergedUser, CACHE_TTL.USER_PROFILE);
+        // Also invalidate the all_users cache as it might be stale
+        cache.invalidate('all_users');
+        return mergedUser;
+    }
+    return null;
   },
 
   createAppointment: async (appointmentData: Omit<Appointment, 'id' | 'users'> & { users: User[] }): Promise<Appointment> => {
@@ -76,7 +88,9 @@ export const databaseService = {
             throw serverError;
         });
     
-    // It's not ideal to fetch users again here, but it's the simplest way to match the existing return type
+    // We re-fetch user objects here because the appointment document in Firestore 
+    // only stores user IDs (userIds array) for security and scalability.
+    // However, the UI expects full User objects in the returned Appointment.
     const user1 = await databaseService.getUser(userIds[0]);
     const user2 = await databaseService.getUser(userIds[1]);
 
@@ -125,9 +139,13 @@ export const databaseService = {
   },
 
   sendBookingConfirmationEmail: async (appointment: Appointment): Promise<void> => {
+    // This utilizes the 'Trigger Email' Firebase Extension.
+    // By adding a document to the 'mail' collection, the extension 
+    // automatically processes it and sends an email via the configured SMTP server (Resend).
     const mailCollection = collection(db, 'mail');
     
-    // Generate ICS content once for the appointment
+    // Generate a Base64-encoded ICS file for calendar integration.
+    // This is attached to the email so users can easily add the session to their calendars.
     const icsBase64 = generateICS(appointment);
     
     // Send to each participant

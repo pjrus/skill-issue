@@ -177,7 +177,9 @@ export default function HomePage() {
   const [viewAll, setViewAll] = useState(false);
   const [allUsers, setAllUsers] = useState<User[]>([]);
 
-  // Fetch match data
+  // Fetch match data:
+  // We prioritize showing recommended matches (bidirectional swaps),
+  // but also fetch all other users to support the "View all" toggle.
   const loadMatches = async () => {
     if (user) {
       setIsLoadingMatches(true);
@@ -207,6 +209,9 @@ export default function HomePage() {
       const newSkillsWanted = searchTermWanted.split(',').map(s => s.trim()).filter(s => s.length > 0);
       const newSkillsOffered = searchTermOffered.split(',').map(s => s.trim()).filter(s => s.length > 0);
 
+      // Skill Normalization and Uniqueness:
+      // We normalize all skills to lowercase for comparison.
+      // Then, we only add skills that the user doesn't already have in their list.
       const normalize = (s: string) => s.toLowerCase();
 
       const existingWantedNormalized = (user.skillsWanted || []).map(normalize);

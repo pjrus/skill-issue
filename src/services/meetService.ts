@@ -24,11 +24,11 @@ export const meetService = {
         throw new Error('GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_REFRESH_TOKEN must be set in .env.');
       }
 
-      // Initialize the Google Auth client using User OAuth 2.0
-      // We don't need a redirect URI here because we're just using the refresh token to get a new access token
+      // Initialize the Google Auth client using User OAuth 2.0.
+      // We use a refresh token obtained during the one-time local setup (get-google-token.mjs).
+      // This allows the app to generate new access tokens as needed without further user interaction.
       const auth = new google.auth.OAuth2(clientId, clientSecret);
       
-      // We already have the refresh token, so we can set it directly
       auth.setCredentials({
         refresh_token: refreshToken
       });
@@ -90,6 +90,10 @@ export const meetService = {
         errorMessage = `${error.response.data.error.message || error.message}`;
       }
       
+      // Fallback Strategy:
+      // If the API call fails (e.g., token expired, quota reached, network issue),
+      // we return a generic 'meet.google.com/new' link. This ensures the user isn't 
+      // blocked from creating a booking, even if the automatic link generation fails.
       console.warn(`[MeetService] Falling back to placeholder link due to error: ${errorMessage}`);
       return {
         meetingUri: 'https://meet.google.com/new',
