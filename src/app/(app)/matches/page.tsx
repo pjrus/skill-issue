@@ -21,7 +21,7 @@ export default function MatchesPage() {
   
   const searchParams = useSearchParams();
   const wantedParam = searchParams.get('wanted');
-  const filteredSkills = wantedParam ? decodeURIComponent(wantedParam).split(',') : [];
+  const filteredSkills = wantedParam ? decodeURIComponent(wantedParam).split(',').map(s => s.trim()).filter(Boolean) : [];
 
   const loadMatches = async (silent = false) => {
     if (user) {
@@ -69,7 +69,11 @@ export default function MatchesPage() {
       const skillsTheyCanTeachMe = otherUserIndex === 1 ? match.matchedSkills.bToA : match.matchedSkills.aToB;
       
       return skillsTheyCanTeachMe.some(skill => 
-        filteredSkills.some(fs => skill.toLowerCase().includes(fs.toLowerCase()))
+        filteredSkills.some(fs => {
+            const s1 = skill.toLowerCase().trim();
+            const s2 = fs.toLowerCase().trim();
+            return s1 === s2 || s1.includes(s2) || s2.includes(s1);
+        })
       );
     });
   };

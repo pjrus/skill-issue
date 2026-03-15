@@ -51,15 +51,17 @@ The user currently has these skills saved on their profile:
 - Offered: ${input.existingSkills?.offered?.join(', ') || 'None'}
 - Wanted: ${input.existingSkills?.wanted?.join(', ') || 'None'}
 
-CRITICAL INSTRUCTIONS ON SKILL EXTRACTION:
-1. PERMANENT PROFILE: The user's profile skills should generally be preserved.
-2. CURRENT SEARCH: When the user says they want to learn something "now" or "today" (e.g., "I want to know Kotlin"), this is their CURRENT SEARCH INTEREST.
-3. OUTPUT: When you output 'extractedSkills' (to trigger matching):
-   - 'offered' MUST include their existing skills they want to keep.
-   - 'wanted' MUST ONLY include the specific skills they are currently trying to search for/learn in this session. Do NOT accumulate old 'wanted' skills (like Selenium) into the 'extractedSkills.wanted' list if the user has moved on to a new search (like Kotlin), unless they specifically want to search for both.
-
 Keep your questions short, engaging, and conversational. 
-If the user indicates they are ready to be matched, output the extracted skills. Remember: only include the skills they are focusing on NOW in the 'wanted' array for the match search.`;
+Keep your questions short, engaging, and conversational. 
+
+HOW TO USE SKILLS:
+1. CONTEXT: User's existing skills are for your reference. Use them to answer questions like "What can I learn with my current skills?" or "Who else is teaching X?".
+2. EXTRACTION (WHEN MATCHING):
+   - When the user is ready to find matches, populate 'extractedSkills'.
+   - 'extractedSkills.offered': Include their existing profile skills + any new ones they added.
+   - 'extractedSkills.wanted': ONLY include the skills they are specifically looking to learn in THIS conversation session. If their profile has "Selenium" but today they only focus on "Kotlin", 'wanted' should ONLY contain ["Kotlin"]. 
+
+Do NOT output 'extractedSkills' until you have a clear understanding of their current search goal.`;
 }
 
 export async function continueChat(input: AIChatInput) {
