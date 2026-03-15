@@ -254,7 +254,7 @@ export default function HomePage() {
 
       {/* Top Section: Find your next Skill Swap Card */}
       <section>
- 
+
         <Card className="w-full shadow-sm border-muted bg-card">
           <CardHeader className="pt-8 pb-4">
             <CardTitle className="flex items-center gap-2 text-xl font-semibold">
@@ -267,21 +267,21 @@ export default function HomePage() {
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium">What do you want to learn?</label>
-                <Input
-                  placeholder="e.g. React, Spanish, Guitar..."
-                  className="bg-background/50"
-                  value={searchTermWanted}
-                  onChange={(e) => setSearchTermWanted(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">What do you want to teach?</label>
+                <label className="text-medium font-medium">What do you want to teach?</label>
                 <Input
                   placeholder="e.g. Graphic Design, Algebra, Baking..."
                   className="bg-background/50"
                   value={searchTermOffered}
                   onChange={(e) => setSearchTermOffered(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-medium font-medium">What do you want to learn?</label>
+                <Input
+                  placeholder="e.g. React, Spanish, Guitar..."
+                  className="bg-background/50"
+                  value={searchTermWanted}
+                  onChange={(e) => setSearchTermWanted(e.target.value)}
                 />
               </div>
             </div>
@@ -303,17 +303,16 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
-       <div className="mb-4 mt-6">
+        <div className="mb-4">
           <Button
             variant="outline"
             onClick={() => router.push('/ai-chat')}
-            className="w-full gap-2 text-muted-foreground dark:text-white bg-card shadow-sm hover:text-foreground hover:bg-muted/50 py-6"
+            className="w-full gap-2 text-muted-foreground dark:text-white bg-card shadow-sm hover:text-foreground hover:bg-muted/50 py-6 mt-4"
           >
             <Sparkles className="w-4 h-4 text-primary" />
             Chat with Skilliton to fix your Skill Issue
           </Button>
         </div>
-
       </section>
 
       <section>
@@ -351,7 +350,7 @@ export default function HomePage() {
               </div>
               <CardTitle className="text-xl">No exact matches found yet</CardTitle>
               <CardDescription className="max-w-md mx-auto mt-2">
-                We couldn't find a perfect overlapped match right now. Try updating your skills or asking the assistant above to broaden your profile!
+                We couldn't find a match right now. Try updating your skills or chatting with Skilliton to broaden your profile!
               </CardDescription>
             </CardHeader>
           </Card>
@@ -401,7 +400,7 @@ export default function HomePage() {
                         )}
                       </div>
                     </div>
-                    
+
                     <UserReviewSnippet userId={u.id} />
                   </CardContent>
                 </Link>
