@@ -98,9 +98,15 @@ export default function HomePage() {
       setSearchTermWanted('');
       setSearchTermOffered('');
 
-      toast({ title: 'Skills Updated', description: 'Refreshing your matches...' });
-      await matchingService.refreshMatches(user.id);
-      await loadMatches();
+      toast({ title: 'Skills Updated', description: 'Finding matches for you...' });
+      
+      // Redirect to matches page with the newly added wanted skills
+      const queryParams = new URLSearchParams();
+      if (newSkillsWanted.length > 0) {
+        queryParams.set('wanted', newSkillsWanted.join(','));
+      }
+      
+      router.push(`/matches?${queryParams.toString()}`);
     } catch (error) {
       console.error(error);
       toast({

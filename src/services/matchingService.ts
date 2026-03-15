@@ -26,20 +26,16 @@ export const matchingService = {
       // We look for users who want what the current user offers AND offer what the current user wants.
       // This ensures a mutual "Skill Swap" opportunity.
       for (const otherUser of potentialMatches) {
-        // Match skills case-insensitively and support partial matches
+        // Match skills case-insensitively with exact string matching for precision
         const aToB = currentUser.skillsOffered.filter(offered => 
           otherUser.skillsWanted.some(wanted => 
-            offered.toLowerCase().trim() === wanted.toLowerCase().trim() ||
-            offered.toLowerCase().includes(wanted.toLowerCase().trim()) ||
-            wanted.toLowerCase().includes(offered.toLowerCase().trim())
+            offered.toLowerCase().trim() === wanted.toLowerCase().trim()
           )
         );
 
         const bToA = otherUser.skillsOffered.filter(offered => 
           currentUser.skillsWanted.some(wanted => 
-            offered.toLowerCase().trim() === wanted.toLowerCase().trim() ||
-            offered.toLowerCase().includes(wanted.toLowerCase().trim()) ||
-            wanted.toLowerCase().includes(offered.toLowerCase().trim())
+            offered.toLowerCase().trim() === wanted.toLowerCase().trim()
           )
         );
 
