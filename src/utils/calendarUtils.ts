@@ -30,7 +30,7 @@ export function generateICS(appointment: Appointment): string {
   const icsLines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//SkillSwap//NONSGML v1.0//EN',
+    'PRODID:-//Skill-Issue//NONSGML v1.0//EN',
     'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
     `DTSTAMP:${formatDate(new Date())}`,

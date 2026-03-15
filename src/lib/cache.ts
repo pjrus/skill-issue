@@ -9,7 +9,7 @@ type CacheEntry<T> = {
 
 class CacheService {
   private memoryCache: Map<string, CacheEntry<any>> = new Map();
-  private prefix = 'skillswap_cache_';
+  private prefix = 'skill-issue_cache_';
 
   /**
    * Get data from cache (memory or localStorage)

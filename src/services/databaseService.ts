@@ -168,7 +168,7 @@ export const databaseService = {
               </div>
               <p>We've attached a calendar invitation to this email for your convenience.</p>
               <p>Happy swapping!</p>
-              <p>Best,<br>The SkillSwap Team</p>
+              <p>Best,<br>The Skill-Issue Team</p>
             </div>
           `,
           attachments: [
