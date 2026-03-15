@@ -26,16 +26,22 @@ export const matchingService = {
       // We look for users who want what the current user offers AND offer what the current user wants.
       // This ensures a mutual "Skill Swap" opportunity.
       for (const otherUser of potentialMatches) {
-        const currentUserWants = currentUser.skillsWanted.map(s => s.toLowerCase());
-        const otherUserOffers = otherUser.skillsOffered.map(s => s.toLowerCase());
-        
-        const otherUserWants = otherUser.skillsWanted.map(s => s.toLowerCase());
-        const currentUserOffers = currentUser.skillsOffered.map(s => s.toLowerCase());
+        // Match skills case-insensitively and support partial matches
+        const aToB = currentUser.skillsOffered.filter(offered => 
+          otherUser.skillsWanted.some(wanted => 
+            offered.toLowerCase().trim() === wanted.toLowerCase().trim() ||
+            offered.toLowerCase().includes(wanted.toLowerCase().trim()) ||
+            wanted.toLowerCase().includes(offered.toLowerCase().trim())
+          )
+        );
 
-        // Intersection of skills: User A's offers meeting User B's wants
-        const aToB = currentUserOffers.filter(skill => otherUserWants.includes(skill));
-        // Intersection of skills: User B's offers meeting User A's wants
-        const bToA = otherUserOffers.filter(skill => currentUserWants.includes(skill));
+        const bToA = otherUser.skillsOffered.filter(offered => 
+          currentUser.skillsWanted.some(wanted => 
+            offered.toLowerCase().trim() === wanted.toLowerCase().trim() ||
+            offered.toLowerCase().includes(wanted.toLowerCase().trim()) ||
+            wanted.toLowerCase().includes(offered.toLowerCase().trim())
+          )
+        );
 
         if (aToB.length > 0 && bToA.length > 0) {
           validMatches.push({ userA: currentUser, userB: otherUser, aToB, bToA });

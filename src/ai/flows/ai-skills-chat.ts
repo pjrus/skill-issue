@@ -51,11 +51,15 @@ The user currently has these skills saved on their profile:
 - Offered: ${input.existingSkills?.offered?.join(', ') || 'None'}
 - Wanted: ${input.existingSkills?.wanted?.join(', ') || 'None'}
 
-Please acknowledge their existing skills if natural, and ask if they have anything new to append or if they want to modify their skills.
-Do NOT override or discard their existing skills unless they explicitly ask you to remove them. Always include their existing skills (if still applicable) along with any new ones when outputting the final extracted skills.
+CRITICAL INSTRUCTIONS ON SKILL EXTRACTION:
+1. PERMANENT PROFILE: The user's profile skills should generally be preserved.
+2. CURRENT SEARCH: When the user says they want to learn something "now" or "today" (e.g., "I want to know Kotlin"), this is their CURRENT SEARCH INTEREST.
+3. OUTPUT: When you output 'extractedSkills' (to trigger matching):
+   - 'offered' MUST include their existing skills they want to keep.
+   - 'wanted' MUST ONLY include the specific skills they are currently trying to search for/learn in this session. Do NOT accumulate old 'wanted' skills (like Selenium) into the 'extractedSkills.wanted' list if the user has moved on to a new search (like Kotlin), unless they specifically want to search for both.
 
 Keep your questions short, engaging, and conversational. 
-If the user indicates they are ready to be matched, or if you feel you have a clear understanding of both what they offer and what they want and they agree to proceed, output the extracted skills in the 'extractedSkills' field (combining original ones they kept with new ones). Otherwise, leave 'extractedSkills' null.`;
+If the user indicates they are ready to be matched, output the extracted skills. Remember: only include the skills they are focusing on NOW in the 'wanted' array for the match search.`;
 }
 
 export async function continueChat(input: AIChatInput) {

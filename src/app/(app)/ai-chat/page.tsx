@@ -155,10 +155,11 @@ export default function AiChatPage() {
       }
       setSkills(null);
       await matchingService.refreshMatches(user.id);
-      toast({ title: 'Profile Updated', description: 'Taking you back home to see your matches...' });
+      toast({ title: 'Profile Updated', description: 'Taking you to see your matches!' });
       
-      // Navigate to home to see matches
-      router.push('/');
+      // Navigate to matches with specific skills we just added
+      const wantedParam = skills.wanted.length > 0 ? `?wanted=${encodeURIComponent(skills.wanted.join(','))}` : '';
+      router.push(`/matches${wantedParam}`);
     } catch (error) {
       console.error(error);
       toast({
@@ -172,16 +173,17 @@ export default function AiChatPage() {
   };
 
   return (
-    <div className={`container py-6 flex flex-col h-[calc(100vh-4rem)] transition-all duration-300 ${isFullScreen ? 'max-w-none px-4' : 'max-w-7xl'}`}>
+    <div className={`container py-6 flex flex-col h-[calc(100vh-4rem)] transition-all duration-300 ${isFullScreen ? 'max-w-none px-4' : ''}`}>
       <Card className={`flex flex-col w-full shadow-sm border-muted flex-1 min-h-[0px] transition-all duration-300 mt-4`}>
-        <CardHeader className="pb-3 border-b bg-muted/20 flex flex-row items-center gap-4">
+        <CardHeader className="pb-3 border-b bg-muted/20 flex flex-row items-center gap-4 px-2 sm:px-4">
            <Button variant="ghost" className="shrink-0 -ml-2 text-muted-foreground hover:text-foreground" onClick={() => router.push('/')}>
                <ArrowLeft className="h-4 w-4 mr-1" /> Back
            </Button>
-           <div className="h-6 w-[1px] bg-border mr-2" />
+           <div className="h-6 w-[1px] bg-border" />
            <CardTitle className="flex items-center gap-2 text-lg">
              <Avatar className="h-6 w-6">
                 <AvatarImage src="/skilliton.png" />
+                <AvatarFallback>SK</AvatarFallback>
              </Avatar>
              Skilliton
           </CardTitle>
@@ -196,10 +198,10 @@ export default function AiChatPage() {
           </Button>
         </CardHeader>
         
-        <CardContent className="flex-1 overflow-hidden flex flex-col p-4">
+        <CardContent className="flex-1 overflow-hidden p-0 flex flex-col relative">
            <div 
               ref={scrollAreaRef}
-              className="flex-1 overflow-y-auto space-y-4 pr-2 pb-4"
+              className="flex-1 overflow-y-auto space-y-4 p-4 sm:p-6"
            >
               {messages.map((msg, idx) => (
                 <div 
@@ -240,23 +242,25 @@ export default function AiChatPage() {
               )}
            </div>
            
-           <div className="mt-4 flex gap-2 pt-2">
-              <Input
-                placeholder="What skill are you looking to learn today? (e.g., Intro to Figma)"
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={isChatting}
-                className="flex-1 rounded-full px-4"
-              />
-              <Button 
-                onClick={handleSendMessage} 
-                disabled={!inputMessage.trim() || isChatting}
-                size="icon"
-                className="rounded-full shrink-0"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
+           <div className="p-4 sm:p-6 px-2 sm:px-4 border-t bg-background/50 backdrop-blur-sm mt-auto">
+              <div className="flex gap-2 w-full">
+                <Input
+                  placeholder="What skill are you looking to learn today? (e.g., Intro to Figma)"
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={isChatting}
+                  className="flex-1 rounded-full px-4 h-12"
+                />
+                <Button 
+                  onClick={handleSendMessage} 
+                  disabled={!inputMessage.trim() || isChatting}
+                  size="icon"
+                  className="rounded-full shrink-0 h-12 w-12"
+                >
+                  <Send className="w-5 h-5" />
+                </Button>
+              </div>
            </div>
         </CardContent>
       </Card>
