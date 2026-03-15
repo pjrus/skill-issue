@@ -7,13 +7,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Video, Clock, Download, ExternalLink, Copy, GraduationCap, BookOpen } from 'lucide-react';
+import { Calendar, Video, Clock, Download, ExternalLink, Copy, GraduationCap, BookOpen, Sparkles } from 'lucide-react';
 import { Icons } from '@/components/icons';
 import { databaseService } from '@/services/databaseService';
 import type { Appointment } from '@/types/matchTypes';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import { format } from 'date-fns';
+import { ReviewModal } from '@/components/reviews/ReviewModal';
+import { reviewService } from '@/services/reviewService';
 
 function formatIcalDate(date: Date): string {
   return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
@@ -56,12 +58,16 @@ export default function BookingsPage() {
   const { user } = useUser();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [reviewedBookingIds, setReviewedBookingIds] = useState<Set<string>>(new Set());
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [activeReviewBooking, setActiveReviewBooking] = useState<Appointment | null>(null);
 
   useEffect(() => {
-    const fetchAppointments = async () => {
+    const fetchData = async () => {
       if (!user) return;
       setIsLoading(true);
       try {
+        // Fetch appointments
         const q = query(
           collection(db, 'appointments'),
           where('userIds', 'array-contains', user.id)
@@ -78,16 +84,24 @@ export default function BookingsPage() {
         
         appts.sort((a, b) => a.date.getTime() - b.date.getTime());
         setAppointments(appts);
+
+        // Fetch user's reviews
+        const userReviews = await reviewService.getReviewsGivenByUser(user.id);
+        setReviewedBookingIds(new Set(userReviews.map(r => r.bookingId)));
         
       } catch (error) {
-        console.error("Error fetching appointments:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchAppointments();
+    fetchData();
   }, [user]);
+
+  const handleReviewSuccess = (bookingId: string) => {
+    setReviewedBookingIds(prev => new Set(prev).add(bookingId));
+  };
 
   return (
     <div className="container py-10 space-y-8">
@@ -103,7 +117,7 @@ export default function BookingsPage() {
            <Card>
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
-                  <Skeleton className="h-12 w-12 rounded-full" />
+                   <Skeleton className="h-12 w-12 rounded-full" />
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-[250px]" />
                     <Skeleton className="h-4 w-[200px]" />
@@ -129,6 +143,7 @@ export default function BookingsPage() {
           {appointments.map((appt) => {
              const otherUser = appt.users.find(u => u.id !== user?.id) || appt.users[0];
              const isInitiator = appt.users[0].id === user?.id;
+             const hasBeenReviewed = reviewedBookingIds.has(appt.id);
              
              return (
               <Card key={appt.id}>
@@ -175,7 +190,7 @@ export default function BookingsPage() {
                       </div>
                    <MeetLinkSection appt={appt} />
                 </CardContent>
-                <CardFooter className="border-t pt-4">
+                <CardFooter className="border-t pt-4 flex gap-4">
                   <Button
                     variant="outline"
                     size="sm"
@@ -185,11 +200,43 @@ export default function BookingsPage() {
                     <Download className="h-4 w-4" />
                     Download to Calendar file (.ics)
                   </Button>
+
+                  {appt.status === 'completed' && !hasBeenReviewed && (
+                    <Button
+                      size="sm"
+                      className="gap-2"
+                      onClick={() => {
+                        setActiveReviewBooking(appt);
+                        setIsReviewModalOpen(true);
+                      }}
+                    >
+                      <Sparkles className="h-4 w-4" />
+                      Leave Review
+                    </Button>
+                  )}
+
+                  {hasBeenReviewed && (
+                    <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                      Review Submitted
+                    </Badge>
+                  )}
                 </CardFooter>
               </Card>
             );
           })}
         </div>
+      )}
+
+      {activeReviewBooking && (
+        <ReviewModal
+          isOpen={isReviewModalOpen}
+          onClose={() => setIsReviewModalOpen(false)}
+          bookingId={activeReviewBooking.id}
+          reviewerId={user!.id}
+          revieweeId={activeReviewBooking.users.find(u => u.id !== user?.id)?.id || ''}
+          revieweeName={activeReviewBooking.users.find(u => u.id !== user?.id)?.username || 'User'}
+          onSuccess={() => handleReviewSuccess(activeReviewBooking.id)}
+        />
       )}
     </div>
   );
@@ -269,5 +316,3 @@ function MeetLinkSection({ appt }: { appt: Appointment }) {
     </div>
   );
 }
-
-

@@ -39,6 +39,15 @@ service cloud.firestore {
         && (!('meetLink' in data) || data.meetLink is string);
     }
 
+    // Schema validation for a Review document
+    function isValidReview(data) {
+      return data.bookingId is string
+        && data.reviewerId is string
+        && data.revieweeId is string
+        && data.reviewText is string
+        && data.createdAt is timestamp;
+    }
+
     match /users/{userId} {
       // CREATE: Allow if user is authenticated (for seeding) OR is creating their own profile.
       // This allows the seed script to run, while still enforcing ownership for regular creation.
@@ -76,6 +85,28 @@ service cloud.firestore {
       // Users can only create mail documents to trigger the extension.
       // They should not be able to read or modify them once sent for security.
       allow create: if isAuth();
+    }
+
+    match /reviews/{reviewId} {
+      // READ: Any authenticated user can read reviews.
+      allow read: if isAuth();
+
+      // CREATE:
+      // 1. User is authenticated and is the reviewer.
+      // 2. Reviewer is not the reviewee (no self-reviews).
+      // 3. Document ID must be unique per booking/reviewer (handled by being the ID).
+      // 4. Data must be valid.
+      // 5. Participants check: Both reviewer and reviewee must be in the booking.
+      allow create: if isAuth() 
+                       && request.auth.uid == request.resource.data.reviewerId
+                       && request.resource.data.reviewerId != request.resource.data.revieweeId
+                       && isValidReview(request.resource.data)
+                       && reviewId == request.resource.data.bookingId + "_" + request.resource.data.reviewerId
+                       && request.resource.data.reviewerId in get(/databases/$(database)/documents/appointments/$(request.resource.data.bookingId)).data.userIds
+                       && request.resource.data.revieweeId in get(/databases/$(database)/documents/appointments/$(request.resource.data.bookingId)).data.userIds;
+      
+      // UPDATE/DELETE: Not allowed (reviews are immutable).
+      allow update, delete: if false;
     }
   }
 }

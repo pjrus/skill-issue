@@ -15,6 +15,8 @@ import { Loader2, X, Eye, EyeOff, Camera, User as UserIcon } from 'lucide-react'
 import { storage } from '@/firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { reviewService } from '@/services/reviewService';
+import type { Review } from '@/types/reviewTypes';
 
 function SkillsInput({ title, skills, setSkills }: { title: string; skills: string[]; setSkills: (skills: string[]) => void; }) {
     const [currentSkill, setCurrentSkill] = useState('');
@@ -72,6 +74,8 @@ export default function SettingsPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [availableModels, setAvailableModels] = useState<{id: string, name: string}[]>([]);
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [isLoadingReviews, setIsLoadingReviews] = useState(true);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -105,6 +109,19 @@ export default function SettingsPage() {
             // Load API key from localStorage (never stored in Firestore)
             const storedKey = localStorage.getItem('geminiApiKey') || '';
             setGeminiApiKey(storedKey);
+
+            // Fetch reviews
+            const fetchReviews = async () => {
+                try {
+                    const data = await reviewService.getReviewsForUser(user.id);
+                    setReviews(data);
+                } catch (error) {
+                    console.error("Failed to fetch reviews", error);
+                } finally {
+                    setIsLoadingReviews(false);
+                }
+            };
+            fetchReviews();
         }
     }, [user]);
 
@@ -182,7 +199,7 @@ export default function SettingsPage() {
     if(!user) return null;
 
     return (
-        <div className="container py-10 max-w-3xl mx-auto">
+        <div className="container py-10 max-w-3xl mx-auto space-y-8">
             <Card>
                 <CardHeader>
                     <CardTitle>Settings</CardTitle>
@@ -302,10 +319,39 @@ export default function SettingsPage() {
                         </div>
                     </div>
 
-                    <Button onClick={handleSave} disabled={isLoading}>
+                    <Button onClick={handleSave} disabled={isLoading} className="w-full">
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Save Changes
                     </Button>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Reviews Received</CardTitle>
+                    <CardDescription>What others are saying about your skills.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {isLoadingReviews ? (
+                        <div className="flex justify-center py-8">
+                            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                        </div>
+                    ) : reviews.length === 0 ? (
+                        <div className="text-center py-8 text-muted-foreground italic">
+                            No reviews received yet. Complete some bookings to get feedback!
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {reviews.map((review) => (
+                                <div key={review.id} className="p-4 rounded-lg border bg-muted/30 space-y-2">
+                                    <p className="text-sm font-medium italic">"{review.reviewText}"</p>
+                                    <p className="text-xs text-muted-foreground text-right">
+                                        Received on {review.createdAt.toLocaleDateString()}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

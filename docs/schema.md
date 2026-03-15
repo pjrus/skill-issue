@@ -1,4 +1,4 @@
-# Skill-Issue Schema and Security Rules
+  # Skill-Issue Schema and Security Rules
 
 This document outlines the data schema for the Skill-Issue application and the corresponding Firestore Security Rules to protect user data.
 
@@ -38,6 +38,19 @@ Represents a scheduled meeting between two users.
   - `teachingSkill` (string): The specific skill the initiator is teaching.
   - `learningSkill` (string): The specific skill the initiator is learning.
 
+### Review
+
+Represents a text review left by one participant for another after a booking.
+
+- **Collection Path:** `/reviews/{bookingId}_{reviewerId}`
+- **Schema:**
+  - `id` (string): The document ID, following the format `{bookingId}_{reviewerId}` to ensure uniqueness.
+  - `bookingId` (string): ID of the corresponding appointment.
+  - `reviewerId` (string): UID of the user leaving the review.
+  - `revieweeId` (string): UID of the user being reviewed.
+  - `reviewText` (string): The content of the review.
+  - `createdAt` (timestamp): When the review was submitted.
+
 ## Firestore Security Rules
 
 The security rules are designed to enforce the following principles:
@@ -45,7 +58,8 @@ The security rules are designed to enforce the following principles:
 1.  **Ownership:** Users have full control over their own data.
 2.  **Read Access for Matching:** Authenticated users can read public portions of other user profiles to facilitate skill matching.
 3.  **Appointment Privacy:** Appointment details are only visible to the participants.
-4.  **Data Integrity:** All data written to the database must conform to the defined schema.
+4.  **Review Integrity:** Reviews are immutable once created. Only participants involved in a booking can review each other.
+5.  **Data Integrity:** All data written to the database must conform to the defined schema.
 
 ### Rules Breakdown
 
@@ -60,3 +74,9 @@ The security rules are designed to enforce the following principles:
 -   **`get`**: Only users whose `userId` is in the `userIds` list for an appointment can read its details.
 -   **`create`**: An appointment can only be created by one of the participants. The data must be a valid `Appointment` object.
 -   **`update`**: An appointment can only be updated by one of the participants. The updated data must also be valid.
+
+#### `/reviews/{reviewId}`
+
+-   **`get`, `list`**: Any authenticated user can read reviews.
+-   **`create`**: A user can only create a review if they were a participant in the referenced booking, the reviewee was also a participant, and they are not reviewing themselves. Document ID must match `{bookingId}_{reviewerId}` to prevent duplicates.
+-   **`update`, `delete`**: Denied. Reviews are immutable.

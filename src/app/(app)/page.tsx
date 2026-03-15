@@ -18,6 +18,7 @@ import { Loader2, ArrowRight, Users, Sparkles, Book, Search } from 'lucide-react
 import { databaseService } from '@/services/databaseService';
 import { useToast } from '@/hooks/use-toast';
 import type { User } from '@/types/userTypes';
+import { reviewService } from '@/services/reviewService';
 
 function MatchCardSkeleton() {
   return (
@@ -50,6 +51,44 @@ function MatchCardSkeleton() {
         <Skeleton className="h-10 w-full" />
       </CardFooter>
     </Card>
+  );
+}
+
+function UserReviewSnippet({ userId }: { userId: string }) {
+  const [lastReview, setLastReview] = useState<string | null>(null);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const reviews = await reviewService.getReviewsForUser(userId);
+        setCount(reviews.length);
+        if (reviews.length > 0) {
+          setLastReview(reviews[0].reviewText);
+        }
+      } catch (error) {
+        console.error("Error fetching reviews for snippet:", error);
+      }
+    };
+    fetchReviews();
+  }, [userId]);
+
+  if (count === 0) return null;
+
+  return (
+    <div className="mt-4 pt-4 border-t border-border/50">
+      <div className="flex items-center gap-2 mb-2">
+        <Sparkles className="h-3.5 w-3.5 text-primary" />
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {count} Review{count > 1 ? 's' : ''}
+        </span>
+      </div>
+      {lastReview && (
+        <p className="text-xs text-muted-foreground line-clamp-2 italic">
+          "{lastReview}"
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -94,6 +133,8 @@ function MatchCard({ match }: { match: Match }) {
             {skillsYouGive.map(skill => <Badge key={skill}>{skill}</Badge>)}
           </div>
         </div>
+
+        <UserReviewSnippet userId={otherUser.id} />
       </CardContent>
       <CardFooter>
         <Button className="w-full" onClick={() => router.push(`/booking/${match.id}`)}>
@@ -148,11 +189,9 @@ export default function HomePage() {
     if (!user) return;
     setIsSaving(true);
     try {
-      // Create arrays by splitting on commas and trimming whitespace
       const newSkillsWanted = searchTermWanted.split(',').map(s => s.trim()).filter(s => s.length > 0);
       const newSkillsOffered = searchTermOffered.split(',').map(s => s.trim()).filter(s => s.length > 0);
 
-      // Concatenate and remove duplicates case-insensitively
       const normalize = (s: string) => s.toLowerCase();
 
       const existingWantedNormalized = (user.skillsWanted || []).map(normalize);
@@ -338,6 +377,8 @@ export default function HomePage() {
                       )}
                     </div>
                   </div>
+                  
+                  <UserReviewSnippet userId={u.id} />
                 </CardContent>
                 <CardFooter>
                   <Button className="w-full" disabled>
