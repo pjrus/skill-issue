@@ -15,6 +15,8 @@
 
 </div>
 
+![Skill-Issue sign-in screen](docs/images/sign-in.png)
+
 ---
 
 ## Meet Skilliton
